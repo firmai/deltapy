@@ -5,6 +5,8 @@
 
 Tabular augmentation is a new experimental space that makes use of novel and traditional data generation and synthesisation techniques to improve model prediction success. It is in essence a process of modular feature engineering and observation engineering while emphasising the order of augmentation to achieve the best predicted outcome from a given information set.
 
+For most the [Colab Notebook](https://colab.research.google.com/drive/1-uJqGeKZfJegX0TmovhsO90iasyxZYiT) format might be preferred. I have enabled comments if you want to ask question or address any issues you uncover. For anything pressing use the issues tab. 
+
 ![](assets/Tabularz.png)
 
 Data augmentation can be defined as any method that could increase the size or improve the quality of a dataset by generating new features or instances without the collection of additional data-points. Data augmentation is of particular importance in image classification tasks where additional data can be created by cropping, padding, or flipping existing images.
