@@ -1,32 +1,44 @@
-from sklearn.decomposition import PCA, IncrementalPCA
+from sklearn.decomposition import PCA, IncrementalPCA, KernelPCA
 from sklearn.kernel_approximation import AdditiveChi2Sampler
 from sklearn.cross_decomposition import CCA
 from sklearn.manifold import LocallyLinearEmbedding
 from sklearn.preprocessing import minmax_scale
 from sklearn import datasets, cluster
 from sklearn.neighbors import NearestNeighbors
-
-import tensorflow as tf
 import numpy as np
+import pandas as pd
+import tensorflow as tf
 
 
-def pca_feature(df, memory_issues=False,mem_iss_component=False,variance_or_components=0.80,drop_cols=None):
-
-  if memory_issues:
-    if not mem_iss_component:
-      raise ValueError("If you have memory issues, you have to preselect mem_iss_component")
-    pca = IncrementalPCA(mem_iss_component)
+def pca_feature(df, memory_issues=False,mem_iss_component=False,variance_or_components=0.80,n_components=5 ,drop_cols=None, non_linear=True):
+    
+  if non_linear:
+    pca = KernelPCA(n_components = n_components, kernel='rbf', fit_inverse_transform=True, random_state = 33, remove_zero_eig= True)
   else:
-    if variance_or_components>1:
-      pca = PCA(n_components=variance_or_components) 
-    else: # automted selection based on variance
-      pca = PCA(n_components=variance_or_components,svd_solver="full") 
-  X_pca = pca.fit_transform(df.drop(drop_cols,axis=1))
-  df = pd.concat((df[drop_cols],pd.DataFrame(X_pca, columns=["PCA_"+str(i+1) for i in range(X_pca.shape[1])])),axis=1)
+    if memory_issues:
+      if not mem_iss_component:
+        raise ValueError("If you have memory issues, you have to preselect mem_iss_component")
+      pca = IncrementalPCA(mem_iss_component)
+    else:
+      if variance_or_components>1:
+        pca = PCA(n_components=variance_or_components) 
+      else: # automted selection based on variance
+        pca = PCA(n_components=variance_or_components,svd_solver="full") 
+  if drop_cols:
+    X_pca = pca.fit_transform(df.drop(drop_cols,axis=1))
+    return pd.concat((df[drop_cols],pd.DataFrame(X_pca, columns=["PCA_"+str(i+1) for i in range(X_pca.shape[1])],index=df.index)),axis=1)
+
+  else:
+    X_pca = pca.fit_transform(df)
+    return pd.DataFrame(X_pca, columns=["PCA_"+str(i+1) for i in range(X_pca.shape[1])],index=df.index)
+
+
   return df
 
-# df_out = pv.pca_feature(df,variance_or_components=0.80,drop_cols=["Close_1"])
+# df_out = pca_feature(df_out, variance_or_components=0.9, n_components=8,non_linear=False)
 
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 def cross_lag(df, drop=None, lags=1, components=4 ):
 
@@ -54,6 +66,7 @@ def cross_lag(df, drop=None, lags=1, components=4 ):
 # df_out = cross_lag(df)
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 def a_chi(df, drop=None, lags=1, sample_steps=2 ):
 
@@ -81,6 +94,7 @@ def a_chi(df, drop=None, lags=1, sample_steps=2 ):
 # df_out = a_chi(df)
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 def encoder_dataset(df, drop=None, dimesions=20):
 
@@ -117,6 +131,8 @@ def encoder_dataset(df, drop=None, dimesions=20):
 # df_out = encoder_dataset(df, ["Close_1"], 15)
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 def lle_feat(df, drop=None, components=4):
 
   if drop:
@@ -133,6 +149,7 @@ def lle_feat(df, drop=None, components=4):
 
 # df_out = lle_feat(df,["Close_1"],4)
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 def feature_agg(df, drop=None, components=4):
 
@@ -154,6 +171,7 @@ def feature_agg(df, drop=None, components=4):
 
 # df_out = feature_agg(df.fillna(0),["Close_1"],4 )
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 def neigh_feat(df, drop, neighbors=6):

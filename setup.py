@@ -4,7 +4,7 @@ import sys
 
 
 setup(name='deltapy',
-      version='0.0.2',
+      version='0.1.1',
       description='Data Transformation and Augmentation',
       url='https://github.com/firmai/deltapy',
       author='snowde',
@@ -18,9 +18,11 @@ setup(name='deltapy',
             "tsaug",
             "gplearn",
             "ta",
+            "tensorflow",
             "scikit-learn",
             "scipy",
             "sklearn",
             "statsmodels",
-            "numpy"],
+            "numpy",
+            "seasonal"],
       zip_safe=False)

@@ -12,6 +12,8 @@ import numpy as np
 from scipy import signal, integrate
 from scipy.interpolate import interp1d
 import math
+from statsmodels.tools.sm_exceptions import MissingDataError
+from numpy.linalg import LinAlgError
 
 
 def set_property(key, value):
@@ -26,6 +28,9 @@ def set_property(key, value):
     return decorate_func
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 #-> In Package
 def abs_energy(x):
 
@@ -34,6 +39,9 @@ def abs_energy(x):
     return np.dot(x, x)
 
 # abs_energy(df["Close"])
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 #-> In Package
 def cid_ce(x, normalize):
@@ -52,6 +60,7 @@ def cid_ce(x, normalize):
 
 # cid_ce(df["Close"], True)
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 #-> In Package
@@ -59,6 +68,8 @@ def mean_abs_change(x):
     return np.mean(np.abs(np.diff(x)))
 
 # mean_abs_change(df["Close"])
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 #-> In Package
@@ -75,6 +86,8 @@ def mean_second_derivative_central(x):
 
 # mean_second_derivative_central(df["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 #-> In Package
 def variance_larger_than_standard_deviation(x):
@@ -83,6 +96,8 @@ def variance_larger_than_standard_deviation(x):
     return y > np.sqrt(y)
 
 # variance_larger_than_standard_deviation(df["Close"])
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 var_index_param = {"Volume":None, "Open": None}
 
@@ -110,6 +125,8 @@ def var_index(time,param=var_index_param):
 # var_index(df["Close"].values)
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 #-> In Package
 def symmetry_looking(x, param=[{"r": 0.2}]):
@@ -123,6 +140,8 @@ def symmetry_looking(x, param=[{"r": 0.2}]):
             
 # symmetry_looking(df["Close"])
 
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #-> In Package
 def has_duplicate_max(x):
@@ -140,8 +159,9 @@ def has_duplicate_max(x):
 
 # has_duplicate_max(df["Close"])
 
-#-> In Package
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+#-> In Package
 
 def partial_autocorrelation(x, param=[{"lag": 1}]):
 
@@ -164,6 +184,8 @@ def partial_autocorrelation(x, param=[{"lag": 1}]):
 
 # partial_autocorrelation(df["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 #-> In Package
 def augmented_dickey_fuller(x, param=[{"attr": "teststat"}]):
 
@@ -185,6 +207,8 @@ def augmented_dickey_fuller(x, param=[{"attr": "teststat"}]):
 
 # augmented_dickey_fuller(df["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 @set_property("fctype", "simple")
 @set_property("custom", True)
 def gskew(x):
@@ -200,6 +224,8 @@ def gskew(x):
 
 # gskew(df["Close"])
 
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 stestson_param = {"weight":100., "alpha":2., "beta":2., "tol":1.e-6, "nmax":20}
 
@@ -229,11 +255,15 @@ def stetson_mean(x, param=stestson_param):
 
 # stetson_mean(df["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 #-> In Package
 def length(x):
     return len(x)
     
 # length(df["Close"])
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 #-> In Package
@@ -243,6 +273,8 @@ def count_above_mean(x):
 
 # count_above_mean(df["Close"])
 
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #-> In Package
 
@@ -262,6 +294,8 @@ def longest_strike_below_mean(x):
     return np.max(get_length_sequences_where(x <= np.mean(x))) if x.size > 0 else 0
 
 # longest_strike_below_mean(df["Close"])
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 woz_param = [{"consecutiveStar": n} for n in [2, 4]]
 
@@ -296,6 +330,8 @@ def wozniak(magnitude, param=woz_param):
 # wozniak(df["Close"])
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 #-> In Package
 def last_location_of_maximum(x):
 
@@ -303,6 +339,8 @@ def last_location_of_maximum(x):
     return 1.0 - np.argmax(x[::-1]) / len(x) if len(x) > 0 else np.NaN
 
 # last_location_of_maximum(df["Close"])
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #-> In Package
 def fft_coefficient(x, param = [{"coeff": 10, "attr": "real"}]):
@@ -330,6 +368,8 @@ def fft_coefficient(x, param = [{"coeff": 10, "attr": "real"}]):
 
 # fft_coefficient(df["Close"])
 
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #-> In Package
 
@@ -370,6 +410,8 @@ def ar_coefficient(x, param=[{"coeff": 5, "k": 5}]):
 # ar_coefficient(df["Close"])
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 #-> In Package
 def index_mass_quantile(x, param=[{"q": 0.3}]):
 
@@ -388,6 +430,8 @@ def index_mass_quantile(x, param=[{"q": 0.3}]):
 # index_mass_quantile(df["Close"])
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 
 cwt_param = [ka for ka in [2,6,9]]
@@ -399,6 +443,8 @@ def number_cwt_peaks(x, param=cwt_param):
     return [("CWTPeak_{}".format(n), len(find_peaks_cwt(vector=x, widths=np.array(list(range(1, n + 1))), wavelet=ricker))) for n in param]
 
 # number_cwt_peaks(df["Close"])
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 #-> In Package
@@ -422,6 +468,8 @@ def spkt_welch_density(x, param=[{"coeff": 5}]):
 # spkt_welch_density(df["Close"])
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 #-> In Package
 def linear_trend_timewise(x, param= [{"attr": "pvalue"}]):
@@ -441,6 +489,8 @@ def linear_trend_timewise(x, param= [{"attr": "pvalue"}]):
 # linear_trend_timewise(df["Close"])
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 #-> In Package
 def c3(x, lag=3):
     if not isinstance(x, (np.ndarray, pd.Series)):
@@ -454,6 +504,8 @@ def c3(x, lag=3):
 # c3(df["Close"])
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 #-> In Package
 def binned_entropy(x, max_bins=10):
     if not isinstance(x, (np.ndarray, pd.Series)):
@@ -464,6 +516,8 @@ def binned_entropy(x, max_bins=10):
 
 # binned_entropy(df["Close"])
 
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 svd_param = [{"Tau": ta, "DE": de}
@@ -509,6 +563,8 @@ def svd_entropy(epochs, param=svd_param):
 
 # svd_entropy(df["Close"].values)
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 def _hjorth_mobility(epochs):
     diff = np.diff(epochs, axis=0)
     sigma0 = np.std(epochs, axis=0)
@@ -526,6 +582,8 @@ def hjorth_complexity(epochs):
 
 # hjorth_complexity(df["Close"])
 
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #-> In Package
 def _estimate_friedrich_coefficients(x, m, r):
@@ -547,6 +605,8 @@ def _estimate_friedrich_coefficients(x, m, r):
         return [np.NaN] * (m + 1)
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 def max_langevin_fixed_point(x, r=3, m=30):
     coeff = _estimate_friedrich_coefficients(x, m, r)
@@ -560,6 +620,8 @@ def max_langevin_fixed_point(x, r=3, m=30):
 
 # max_langevin_fixed_point(df["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 will_param = [ka for ka in [0.2,3]]
 
 @set_property("fctype", "combiner")
@@ -569,6 +631,8 @@ def willison_amplitude(X, param=will_param):
 
 # willison_amplitude(df["Close"])
 
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 perc_param = [{"base":ba, "exponent":exp} for ba in [3,5] for exp in [-0.1,-0.2]]
 
@@ -588,6 +652,8 @@ def percent_amplitude(x, param =perc_param):
 # percent_amplitude(df["Close"])
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 #-> fixes required
 
 
@@ -602,17 +668,20 @@ def cad_prob(cads, param=cad_param):
 # cad_prob(df["Close"])
 
 
-cad_param = [0.01, 8]
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+zero_param = [0.01, 8]
 
 @set_property("fctype", "combiner")
 @set_property("custom", True)
-def zero_crossing_derivative(epochs, param=cad_param):
+def zero_crossing_derivative(epochs, param=zero_param):
     diff = np.diff(epochs)
     norm = diff-diff.mean()
     return [("e_{}".format(e), np.apply_along_axis(lambda epoch: np.sum(((epoch[:-5] <= e) & (epoch[5:] > e))), 0, norm).ravel()[0]) for e in param]
 
 # zero_crossing_derivative(df["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 @set_property("fctype", "simple")
@@ -661,6 +730,7 @@ def detrended_fluctuation_analysis(epochs):
     return np.apply_along_axis(dfa_1d, 0, epochs).ravel()[0]
 
 # detrended_fluctuation_analysis(df["Close"])
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 def _embed_seq(X, Tau, D):
@@ -687,12 +757,13 @@ def fisher_information(epochs, param=fisher_param):
 
 # fisher_information(df["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-hig_para = [{"Kmax": 3},{"Kmax": 5}]
+hig_param = [{"Kmax": 3},{"Kmax": 5}]
 
 @set_property("fctype", "combiner")
 @set_property("custom", True)
-def higuchi_fractal_dimension(epochs, param=hig_para):
+def higuchi_fractal_dimension(epochs, param=hig_param):
     def hfd_1d(X, Kmax):
         
         L = []
@@ -716,6 +787,7 @@ def higuchi_fractal_dimension(epochs, param=hig_para):
     
 # higuchi_fractal_dimension(df["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 @set_property("fctype", "simple")
 @set_property("custom", True)
@@ -745,6 +817,7 @@ def petrosian_fractal_dimension(epochs):
 
 # petrosian_fractal_dimension(df["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 @set_property("fctype", "simple")
 @set_property("custom", True)
@@ -784,6 +857,7 @@ def hurst_exponent(epochs):
     return np.apply_along_axis(hurst_1d, 0, epochs).ravel()[0]
 
 # hurst_exponent(df["Close"])
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 def _embed_seq(X, Tau, D):
     shape = (X.size - Tau * (D - 1), D)
@@ -842,7 +916,7 @@ def largest_lyauponov_exponent(epochs, param=lyaup_param):
   
 # largest_lyauponov_exponent(df["Close"])
 
-
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 whelch_param = [100,200]
@@ -864,6 +938,7 @@ def whelch_method(data, param=whelch_param):
 
 # whelch_method(df["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #-> Basically same as above
 freq_param = [{"fs":50, "sel":15},{"fs":200, "sel":20}]
@@ -887,9 +962,9 @@ def find_freq(serie, param=freq_param):
 
 # find_freq(df["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 #-> In Package
-
-
 
 def flux_perc(magnitude):
     sorted_data = np.sort(magnitude)
@@ -908,6 +983,8 @@ def flux_perc(magnitude):
 
 # flux_perc(df["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 @set_property("fctype", "simple")
 @set_property("custom", True)
 def range_cum_s(magnitude):
@@ -920,14 +997,14 @@ def range_cum_s(magnitude):
 
 # range_cum_s(df["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-
-var_index_param = {"Volume":df["Volume"].values, "Open": df["Open"].values}
+struct_param = {"Volume":None, "Open": None}
 
 @set_property("fctype", "combiner")
 @set_property("custom", True)
-def structure_func(time, param=var_index_param):
+def structure_func(time, param=struct_param):
 
       dict_final = {}
       for key, magnitude in param.items():
@@ -975,7 +1052,9 @@ def structure_func(time, param=var_index_param):
 
       return [("StructureFunction_{}__m_{}".format(key, name), li)  for key, lis in dict_final.items() for name, li in zip([21,31,32], lis)]
 
-# structure_func(df["Close"])
+# structure_func(df["Close"], struct_param)
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 #-> In Package
@@ -986,6 +1065,8 @@ def kurtosis(x):
     return pd.Series.kurtosis(x)
 
 # kurtosis(df["Close"])
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 @set_property("fctype", "simple")

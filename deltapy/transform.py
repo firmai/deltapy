@@ -3,9 +3,20 @@ import numpy as np
 import statsmodels.api as sm
 from scipy import signal, integrate
 from pykalman import UnscentedKalmanFilter
-from fbprophet import prophet_dataframe
-from tsaug import magnify,affine, crop, cross_sum , resample, reverse, trend, random_affine, random_crop, random_cross_sum, random_sidetrack, random_time_warp, random_magnify, random_jitter, random_trend
+from tsaug import *
+from fbprophet import Prophet
+import pylab as pl
+from seasonal.periodogram import periodogram
 
+def infer_seasonality(train,index=0): ##skip the first one, normally
+    interval, power = periodogram(train, min_period=4, max_period=None)
+    try:
+      season = int(pd.DataFrame([interval, power]).T.sort_values(1,ascending=False).iloc[0,index])
+    except:
+      print("Failed")
+    return min(season,5)
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 def robust_scaler(df, drop=None,quantile_range=(25, 75) ):
@@ -22,6 +33,9 @@ def robust_scaler(df, drop=None,quantile_range=(25, 75) ):
 
 # df = robust_scaler(df, drop=["Close_1"])
 
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 def standard_scaler(df,drop ):
     if drop:
       keep = df[drop]
@@ -36,19 +50,27 @@ def standard_scaler(df,drop ):
 
 # df = standard_scaler(df, drop=["Close"])           
 
-def fast_fracdiff(x, d):
-    import pylab as pl
-    T = len(x)
-    np2 = int(2 ** np.ceil(np.log2(2 * T - 1)))
-    k = np.arange(1, T)
-    b = (1,) + tuple(np.cumprod((k - d - 1) / k))
-    z = (0,) * (np2 - T)
-    z1 = b + z
-    z2 = tuple(x) + z
-    dx = pl.ifft(pl.fft(z1) * pl.fft(z2))
-    return np.real(dx[0:T])
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+def fast_fracdiff(x, cols, d):
+    for col in cols:
+      T = len(x[col])
+      np2 = int(2 ** np.ceil(np.log2(2 * T - 1)))
+      k = np.arange(1, T)
+      b = (1,) + tuple(np.cumprod((k - d - 1) / k))
+      z = (0,) * (np2 - T)
+      z1 = b + z
+      z2 = tuple(x[col]) + z
+      dx = pl.ifft(pl.fft(z1) * pl.fft(z2))
+      x[col+"_frac"] = np.real(dx[0:T])
+    return x 
   
-# df["FRACDIF"] = fast_fracdiff(df["Close"],0.5)
+# df_out = fast_fracdiff(df.copy(), ["Close","Open"],0.5); df_out.head()
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 def outlier_detect(data,col,threshold=1,method="IQR"):
       
@@ -97,8 +119,11 @@ def windsorization(data,col,para,strategy='both'):
 # _, para = outlier_detect(df, "Close")
 # df = windsorization(df,"Close",para,strategy='both')
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 def operations(df,features):
-      df_new = df[features]
+  df_new = df[features]
   df_new = df_new - df_new.min()
 
   sqr_name = [str(fa)+"_POWER_2" for fa in df_new.columns]
@@ -118,6 +143,9 @@ def operations(df,features):
   return df
 
 # df = operations(df,["Close"])
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 def initial_trend(series, slen):
     sum = 0.0
@@ -140,49 +168,56 @@ def initial_seasonal_components(series, slen):
         seasonals[i] = sum_of_vals_over_avg/n_seasons
     return seasonals
 
-def triple_exponential_smoothing(series, slen, alpha, beta, gamma, n_preds):
-    result = []
-    seasonals = initial_seasonal_components(series, slen)
-
-    for i in range(len(series)+n_preds):
-        if i == 0: # initial values
-            smooth = series[0]
-            trend = initial_trend(series, slen)
-            result.append(series[0])
-            continue
-        if i >= len(series): # we are forecasting
-            m = i - len(series) + 1
-            result.append((smooth + m*trend) + seasonals[i%slen])
-        else:
-            val = series[i]
-            last_smooth, smooth = smooth, alpha*(val-seasonals[i%slen]) + (1-alpha)*(smooth+trend)
-            trend = beta * (smooth-last_smooth) + (1-beta)*trend
-            seasonals[i%slen] = gamma*(val-smooth) + (1-gamma)*seasonals[i%slen]
-            result.append(smooth+trend+seasonals[i%slen])
+def triple_exponential_smoothing(df,cols, slen, alpha, beta, gamma, n_preds):
+    for col in cols:
+      result = []
+      seasonals = initial_seasonal_components(df[col], slen)
+      for i in range(len(df[col])+n_preds):
+          if i == 0: # initial values
+              smooth = df[col][0]
+              trend = initial_trend(df[col], slen)
+              result.append(df[col][0])
+              continue
+          if i >= len(df[col]): # we are forecasting
+              m = i - len(df[col]) + 1
+              result.append((smooth + m*trend) + seasonals[i%slen])
+          else:
+              val = df[col][i]
+              last_smooth, smooth = smooth, alpha*(val-seasonals[i%slen]) + (1-alpha)*(smooth+trend)
+              trend = beta * (smooth-last_smooth) + (1-beta)*trend
+              seasonals[i%slen] = gamma*(val-smooth) + (1-gamma)*seasonals[i%slen]
+              result.append(smooth+trend+seasonals[i%slen])
+      df[col+"_TES"] = result
     #print(seasonals)
-    return result
+    return df
 
-# df["TES"] = triple_exponential_smoothing(df["Close"], 12, .2,.2,.2,0)
-
-
+# df_out= triple_exponential_smoothing(df.copy(),["Close"], 12, .2,.2,.2,0); df_out.head()
 
 
-def naive_dec(df, column, freq=4):
-  decomposition = sm.tsa.seasonal_decompose(df[column], model='additive', freq = freq, two_sided=False,)
-  df["NDDT"] = decomposition.trend
-  df["NDDS"] = decomposition.seasonal
-  df["NDDR"] = decomposition.resid
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+def naive_dec(df, columns, freq=2):
+  for col in columns:
+    decomposition = sm.tsa.seasonal_decompose(df[col], model='additive', freq = freq, two_sided=False)
+    df[col+"_NDDT" ] = decomposition.trend
+    df[col+"_NDDS"] = decomposition.seasonal
+    df[col+"_NDDR"] = decomposition.resid
   return df
 
-# df = naive_dec(df, "Close")
+# df_out = naive_dec(df.copy(), ["Close","Open"]); df_out.head()
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-
-def bkb(df, column):
-  df["BPF"] = sm.tsa.filters.bkfilter(df[[column]].values, 2, 10, len(df)-1)
+def bkb(df, cols):
+  for col in cols:
+    df[col+"_BPF"] = sm.tsa.filters.bkfilter(df[[col]].values, 2, 10, len(df)-1)
   return df
 
-# df = bkb(df, "Close")
+# df_out = bkb(df.copy(), ["Close"]); df_out.head()
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 def butter_lowpass(cutoff, fs=20, order=5):
@@ -191,95 +226,124 @@ def butter_lowpass(cutoff, fs=20, order=5):
     b, a = signal.butter(order, normal_cutoff, btype='low', analog=False)
     return b, a
     
-def butter_lowpass_filter(data, cutoff, fs=20, order=5):
+def butter_lowpass_filter(df,cols, cutoff, fs=20, order=5):
     b, a = butter_lowpass(cutoff, fs, order=order)
-    y = signal.lfilter(b, a, data)
-    return y
+    for col in cols:
+      df[col+"_BUTTER"] = signal.lfilter(b, a, df[col])
+    return df
 
-# df["BUTTER"] = butter_lowpass_filter(df["Close"],4)
-
-
-
-
-def instantaneous_phases(band_signals, axis=0):
-    analytical_signal = signal.hilbert(band_signals, axis=axis)
-    return np.unwrap(np.angle(analytical_signal), axis=axis)
-
-# df["HILBANG"] = instantaneous_phases(df["Close"])
+# df_out = butter_lowpass_filter(df.copy(),["Close"],4); df_out.head()
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-def kalman_feat(df, col):
-      ukf = UnscentedKalmanFilter(lambda x, w: x + np.sin(w), lambda x, v: x + v, observation_covariance=0.1)
-  (filtered_state_means, filtered_state_covariances) = ukf.filter(df[col])
-  (smoothed_state_means, smoothed_state_covariances) = ukf.smooth(df[col])
-  df["UKFSMOOTH"] = smoothed_state_means.flatten()
-  df["UKFFILTER"] = filtered_state_means.flatten()
+
+def instantaneous_phases(df,cols):
+    for col in cols:
+      df[col+"_HILLB"] = np.unwrap(np.angle(signal.hilbert(df[col], axis=0)), axis=0)
+    return df
+
+# df_out = instantaneous_phases(df.copy(), ["Close"]); df_out.head()
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+def kalman_feat(df, cols):
+  for col in cols:
+    ukf = UnscentedKalmanFilter(lambda x, w: x + np.sin(w), lambda x, v: x + v, observation_covariance=0.1)
+    (filtered_state_means, filtered_state_covariances) = ukf.filter(df[col])
+    (smoothed_state_means, smoothed_state_covariances) = ukf.smooth(df[col])
+    df[col+"_UKFSMOOTH"] = smoothed_state_means.flatten()
+    df[col+"_UKFFILTER"] = filtered_state_means.flatten()
   return df 
 
-# df = kalman_feat(df, "Close")
+# df_out = kalman_feat(df.copy(), ["Close"]); df_out.head()
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-def perd_feat(df, column):
-  df["FREQ"] = signal.periodogram(df[column],fs=1, return_onesided=False)[0]
-  df["POWER"] = signal.periodogram(df[column],fs=1, return_onesided=False)[1]
+def perd_feat(df, cols):
+  for col in cols:
+    sig = signal.periodogram(df[col],fs=1, return_onesided=False)
+    df[col+"_FREQ"] = sig[0]
+    df[col+"_POWER"] = sig[1]
   return df
 
-# df = perd_feat(df,"Close")
+# df_out = perd_feat(df.copy(),["Close"]); df_out.head()
 
-def fft_feat(df, col):
-      fft_df = np.fft.fft(np.asarray(df[col].tolist()))
-  fft_df = pd.DataFrame({'fft':fft_df})
-  df['FFTABS'] = fft_df['fft'].apply(lambda x: np.abs(x)).values
-  df['FFTANGLE'] = fft_df['fft'].apply(lambda x: np.angle(x)).values
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+def fft_feat(df, cols):
+  for col in cols:
+    fft_df = np.fft.fft(np.asarray(df[col].tolist()))
+    fft_df = pd.DataFrame({'fft':fft_df})
+    df[col+'_FFTABS'] = fft_df['fft'].apply(lambda x: np.abs(x)).values
+    df[col+'_FFTANGLE'] = fft_df['fft'].apply(lambda x: np.angle(x)).values
   return df 
 
-# df = fft_feat(df, "Close")
+# df_out = fft_feat(df.copy(), ["Close"]); df_out.head()
 
 
-def harmonicradar_cw(X,fs,fc):
-    ttxt = f'CW: {fc} Hz'
-    #%% input
-    t = X
-    tx = np.sin(2*np.pi*fc*t)
-    _,Pxx = signal.welch(tx,fs)
-    #%% diode
-    d = (signal.square(2*np.pi*fc*t))
-    d[d<0] = 0.
-    #%% output of diode
-    rx = tx * d
-    return rx
-
-# df["DIODE"] = harmonicradar_cw(df["Close"],0.3,0.2)
-
-def saw(df, column):
-      return signal.sawtooth(df[column])
-
-# df["SAW"] = saw(df,"Close")
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-def modify(df, column):
-  df["magnify"], _ = magnify(df[column].values, df[column].values)
-  df["affine"], _ = affine(df[column].values, df[column].values)
-  df["crop"], _ = crop(df[column].values, df[column].values)
-  df["cross_sum"], _ = cross_sum(df[column].values, df[column].values)
-  df["resample"], _ = resample(df[column].values, df[column].values)
-  df["trend"], _ = trend(df[column].values, df[column].values)
+def harmonicradar_cw(df, cols, fs,fc):
+    for col in cols:
+      ttxt = f'CW: {fc} Hz'
+      #%% input
+      t = df[col]
+      tx = np.sin(2*np.pi*fc*t)
+      _,Pxx = signal.welch(tx,fs)
+      #%% diode
+      d = (signal.square(2*np.pi*fc*t))
+      d[d<0] = 0.
+      #%% output of diode
+      rx = tx * d
+      df[col+"_HARRAD"] = rx.values
+    return df
 
-  df["random_affine"], _ = random_time_warp(df[column].values, df[column].values)
-  df["random_crop"], _ = random_crop(df[column].values, df[column].values)
-  df["random_cross_sum"], _ = random_cross_sum(df[column].values, df[column].values)
-  df["random_sidetrack"], _ = random_sidetrack(df[column].values, df[column].values)
-  df["random_time_warp"], _ = random_time_warp(df[column].values, df[column].values)
-  df["random_magnify"], _ = random_magnify(df[column].values, df[column].values)
-  df["random_jitter"], _ = random_jitter(df[column].values, df[column].values)
-  df["random_trend"], _ = random_trend(df[column].values, df[column].values)
+# df_out = harmonicradar_cw(df.copy(), ["Close"],0.3,0.2); df_out.head()
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+def saw(df, cols):
+    for col in cols:
+      df[col+" SAW"] = signal.sawtooth(df[col])
+    return df
+
+# df_out = saw(df.copy(),["Close","Open"]); df_out.head()
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+def modify(df, cols):
+  for col in cols:
+    series = df[col].values
+    df[col+"_magnify"], _ = magnify(series, series)
+    df[col+"_affine"], _ = affine(series, series)
+    df[col+"_crop"], _ = crop(series, series)
+    df[col+"_cross_sum"], _ = cross_sum(series, series)
+    df[col+"_resample"], _ = resample(series, series)
+    df[col+"_trend"], _ = trend(series, series)
+
+    df[col+"_random_affine"], _ = random_time_warp(series, series)
+    df[col+"_random_crop"], _ = random_crop(series, series)
+    df[col+"_random_cross_sum"], _ = random_cross_sum(series, series)
+    df[col+"_random_sidetrack"], _ = random_sidetrack(series, series)
+    df[col+"_random_time_warp"], _ = random_time_warp(series, series)
+    df[col+"_random_magnify"], _ = random_magnify(series, series)
+    df[col+"_random_jitter"], _ = random_jitter(series, series)
+    df[col+"_random_trend"], _ = random_trend(series, series)
   return df
 
-# df_out = modify(df,"Close")
+# df_out = modify(df.copy(),["Close"]); df_out.head()
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 def multiple_rolling(df, windows = [1,2], functions=["mean","std"], columns=None):
-      windows = [1+a for a in windows]
+  windows = [1+a for a in windows]
   if not columns:
     columns = df.columns.to_list()
   rolling_dfs = (df[columns].rolling(i)                                    # 1. Create window
@@ -296,9 +360,11 @@ def multiple_rolling(df, windows = [1,2], functions=["mean","std"], columns=None
 
 # df = multiple_rolling(df, columns=["Close"]);
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 def multiple_lags(df, start=1, end=3,columns=None):
-      if not columns:
+  if not columns:
     columns = df.columns.to_list()
   lags = range(start, end+1)  # Just two lags for demonstration.
 
@@ -312,27 +378,28 @@ def multiple_lags(df, start=1, end=3,columns=None):
 # df = multiple_lags(df, start=1, end=3, columns=["Close"])
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-def prophet_feat(df, col,drops, freq):
-      def prophet_dataframe(df): 
+
+def prophet_feat(df, cols,date, freq,train_size=150):
+  def prophet_dataframe(df): 
     df.columns = ['ds','y']
     return df
 
-  train_size = 150
   def original_dataframe(df, freq, name):
     prophet_pred = pd.DataFrame({"Date" : df['ds'], name : df["yhat"]})
     prophet_pred = prophet_pred.set_index("Date")
     #prophet_pred.index.freq = pd.tseries.frequencies.to_offset(freq)
     return prophet_pred[name].values
 
-  model = Prophet(daily_seasonality=True)
-  fb = model.fit(prophet_dataframe(df[drops].head(train_size)))
-  forecast_len = len(df) - train_size
-  future = model.make_future_dataframe(periods=forecast_len,freq=freq)
-  future_pred = model.predict(future)
-  df["PROPHET"] = None
-  return list(original_dataframe(future_pred,freq,col))
+  for col in cols:
+    model = Prophet(daily_seasonality=True)
+    fb = model.fit(prophet_dataframe(df[[date, col]].head(train_size)))
+    forecast_len = len(df) - train_size
+    future = model.make_future_dataframe(periods=forecast_len,freq=freq)
+    future_pred = model.predict(future)
+    df[col+"_PROPHET"] = list(original_dataframe(future_pred,freq,col))
+  return df
 
-
-# df["PROPHET"]  = prophet_feat(df.reset_index(),"Close", ["Date","Close"], "D")
+# df_out  = prophet_feat(df.copy().reset_index(),["Close","Open"],"Date", "D"); df_out.head()
 

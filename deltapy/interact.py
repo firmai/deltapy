@@ -9,44 +9,36 @@ from gplearn.genetic import SymbolicTransformer
 from scipy import linalg
 import math
 
-def lowess(x, y, f=2. / 3., iter=3):
-    """lowess(x, y, f=2./3., iter=3) -> yest
-    Lowess smoother: Robust locally weighted regression.
-    The lowess function fits a nonparametric regression curve to a scatterplot.
-    The arrays x and y contain an equal number of elements; each pair
-    (x[i], y[i]) defines a data point in the scatterplot. The function returns
-    the estimated (smooth) values of y.
-    The smoothing span is given by f. A larger value for f will result in a
-    smoother curve. The number of robustifying iterations is given by iter. The
-    function will run faster with a smaller number of iterations.
-    """
-    n = len(x)
-    r = int(ceil(f * n))
-    h = [np.sort(np.abs(x - x[i]))[r] for i in range(n)]
-    w = np.clip(np.abs((x[:, None] - x[None, :]) / h), 0.0, 1.0)
-    w = (1 - w ** 3) ** 3
-    yest = np.zeros(n)
-    delta = np.ones(n)
-    for iteration in range(iter):
-        for i in range(n):
-            weights = delta * w[:, i]
-            b = np.array([np.sum(weights * y), np.sum(weights * y * x)])
-            A = np.array([[np.sum(weights), np.sum(weights * x)],
-                          [np.sum(weights * x), np.sum(weights * x * x)]])
-            beta = linalg.solve(A, b)
-            yest[i] = beta[0] + beta[1] * x[i]
+def lowess(df, cols, y, f=2. / 3., iter=3):
+    for col in cols:
+      n = len(df[col])
+      r = int(ceil(f * n))
+      h = [np.sort(np.abs(df[col] - df[col][i]))[r] for i in range(n)]
+      w = np.clip(np.abs((df[col][:, None] - df[col][None, :]) / h), 0.0, 1.0)
+      w = (1 - w ** 3) ** 3
+      yest = np.zeros(n)
+      delta = np.ones(n)
+      for iteration in range(iter):
+          for i in range(n):
+              weights = delta * w[:, i]
+              b = np.array([np.sum(weights * y), np.sum(weights * y * df[col])])
+              A = np.array([[np.sum(weights), np.sum(weights * df[col])],
+                            [np.sum(weights * df[col]), np.sum(weights * df[col] * df[col])]])
+              beta = linalg.solve(A, b)
+              yest[i] = beta[0] + beta[1] * df[col][i]
 
-        residuals = y - yest
-        s = np.median(np.abs(residuals))
-        delta = np.clip(residuals / (6.0 * s), -1, 1)
-        delta = (1 - delta ** 2) ** 2
+          residuals = y - yest
+          s = np.median(np.abs(residuals))
+          delta = np.clip(residuals / (6.0 * s), -1, 1)
+          delta = (1 - delta ** 2) ** 2
+      df[col+"_LOWESS"] = yest
 
-    return yest
+    return df
+
+# df_out = lowess(df.copy(), ["Open","Volume"], df["Close"], f=0.25, iter=3); df_out.head()
 
 
-# df["LOWLESS"] = lowess(df["Open"], df["Close"], f=0.25, iter=3)
-
-
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 def autoregression(df, drop=None, settings={"autoreg_lag":4}):
@@ -83,9 +75,10 @@ def autoregression(df, drop=None, settings={"autoreg_lag":4}):
 
 # df = autoregression(df.fillna(0))
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 def muldiv(df, feature_list):
-      for feat in feature_list:
+  for feat in feature_list:
     for feat_two in feature_list:
       if feat==feat_two:
         continue
@@ -97,18 +90,20 @@ def muldiv(df, feature_list):
 
 # df = muldiv(df, ["Close","Open"]) 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
-def decision_tree_disc(df, x, depth=4 ):
-  df[x +"_m1"] = df[x].shift(1)
-  df = df.iloc[1:,:]
-  tree_model = DecisionTreeRegressor(max_depth=depth,random_state=0)
-  tree_model.fit(df[x +"_m1"].to_frame(), df[x])
-  df[x+"_Disc"] = tree_model.predict(df[x +"_m1"].to_frame())
+def decision_tree_disc(df, cols, depth=4 ):
+  for col in cols:
+    df[col +"_m1"] = df[col].shift(1)
+    df = df.iloc[1:,:]
+    tree_model = DecisionTreeRegressor(max_depth=depth,random_state=0)
+    tree_model.fit(df[col +"_m1"].to_frame(), df[col])
+    df[col+"_Disc"] = tree_model.predict(df[col +"_m1"].to_frame())
   return df
 
-# df = decision_tree_disc(df, "Close")
+# df_out = decision_tree_disc(df, ["Close"]); df_out.head()
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 def quantile_normalize(df, drop):
 
@@ -133,6 +128,7 @@ def quantile_normalize(df, drop):
 
 # df_out = quantile_normalize(df.fillna(0), drop=["Close"])
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 def haversine_distance(row, lon="Open", lat="Close"):
@@ -150,15 +146,16 @@ def haversine_distance(row, lon="Open", lat="Close"):
 
 # df['distance_central'] = df.apply(haversine_distance,axis=1); df.iloc[:,4:]
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 def tech(df):
-      return = ta.add_all_ta_features(
-      df, open="Open", high="High", low="Low", close="Close", volume="Volume")
+      return ta.add_all_ta_features(df, open="Open", high="High", low="Low", close="Close", volume="Volume")
   
 # df = tech(df)
 
     
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 def genetic_feat(df, num_gen=20, num_comp=10):
