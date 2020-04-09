@@ -2869,21 +2869,8 @@ df_out.head()
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table class="dataframe">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -3022,8 +3009,6 @@ df_out.head()
     </tr>
   </tbody>
 </table>
-</div>
-
 
 
 
@@ -3199,56 +3184,6 @@ extract.var_index(df["Close"].values,var_index_param)
 !pip install git+git://github.com/firmai/tsfresh.git
 ```
 
-    Collecting git+git://github.com/firmai/tsfresh.git
-      Cloning git://github.com/firmai/tsfresh.git to /tmp/pip-req-build-fvtf5lt8
-      Running command git clone -q git://github.com/firmai/tsfresh.git /tmp/pip-req-build-fvtf5lt8
-    Requirement already satisfied: requests>=2.9.1 in /usr/local/lib/python3.6/dist-packages (from tsfresh==0.15.2.dev32+g923288e) (2.21.0)
-    Requirement already satisfied: numpy>=1.12.0 in /usr/local/lib/python3.6/dist-packages (from tsfresh==0.15.2.dev32+g923288e) (1.18.2)
-    Requirement already satisfied: pandas!=0.24.*,>=0.20.3 in /usr/local/lib/python3.6/dist-packages (from tsfresh==0.15.2.dev32+g923288e) (0.25.3)
-    Requirement already satisfied: scipy>=1.2.0 in /usr/local/lib/python3.6/dist-packages (from tsfresh==0.15.2.dev32+g923288e) (1.4.1)
-    Requirement already satisfied: statsmodels>=0.8.0 in /usr/local/lib/python3.6/dist-packages (from tsfresh==0.15.2.dev32+g923288e) (0.10.2)
-    Requirement already satisfied: patsy>=0.4.1 in /usr/local/lib/python3.6/dist-packages (from tsfresh==0.15.2.dev32+g923288e) (0.5.1)
-    Requirement already satisfied: scikit-learn>=0.19.0 in /usr/local/lib/python3.6/dist-packages (from tsfresh==0.15.2.dev32+g923288e) (0.22.2.post1)
-    Requirement already satisfied: tqdm>=4.10.0 in /usr/local/lib/python3.6/dist-packages (from tsfresh==0.15.2.dev32+g923288e) (4.38.0)
-    Requirement already satisfied: dask[dataframe]>=0.15.2 in /usr/local/lib/python3.6/dist-packages (from tsfresh==0.15.2.dev32+g923288e) (2.12.0)
-    Requirement already satisfied: distributed>=1.18.3 in /usr/local/lib/python3.6/dist-packages (from tsfresh==0.15.2.dev32+g923288e) (1.25.3)
-    Requirement already satisfied: urllib3<1.25,>=1.21.1 in /usr/local/lib/python3.6/dist-packages (from requests>=2.9.1->tsfresh==0.15.2.dev32+g923288e) (1.24.3)
-    Requirement already satisfied: chardet<3.1.0,>=3.0.2 in /usr/local/lib/python3.6/dist-packages (from requests>=2.9.1->tsfresh==0.15.2.dev32+g923288e) (3.0.4)
-    Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.6/dist-packages (from requests>=2.9.1->tsfresh==0.15.2.dev32+g923288e) (2019.11.28)
-    Requirement already satisfied: idna<2.9,>=2.5 in /usr/local/lib/python3.6/dist-packages (from requests>=2.9.1->tsfresh==0.15.2.dev32+g923288e) (2.8)
-    Requirement already satisfied: python-dateutil>=2.6.1 in /usr/local/lib/python3.6/dist-packages (from pandas!=0.24.*,>=0.20.3->tsfresh==0.15.2.dev32+g923288e) (2.8.1)
-    Requirement already satisfied: pytz>=2017.2 in /usr/local/lib/python3.6/dist-packages (from pandas!=0.24.*,>=0.20.3->tsfresh==0.15.2.dev32+g923288e) (2018.9)
-    Requirement already satisfied: six in /usr/local/lib/python3.6/dist-packages (from patsy>=0.4.1->tsfresh==0.15.2.dev32+g923288e) (1.12.0)
-    Requirement already satisfied: joblib>=0.11 in /usr/local/lib/python3.6/dist-packages (from scikit-learn>=0.19.0->tsfresh==0.15.2.dev32+g923288e) (0.14.1)
-    Collecting partd>=0.3.10; extra == "dataframe"
-      Downloading https://files.pythonhosted.org/packages/44/e1/68dbe731c9c067655bff1eca5b7d40c20ca4b23fd5ec9f3d17e201a6f36b/partd-1.1.0-py3-none-any.whl
-    Requirement already satisfied: toolz>=0.7.3; extra == "dataframe" in /usr/local/lib/python3.6/dist-packages (from dask[dataframe]>=0.15.2->tsfresh==0.15.2.dev32+g923288e) (0.10.0)
-    Requirement already satisfied: fsspec>=0.6.0; extra == "dataframe" in /usr/local/lib/python3.6/dist-packages (from dask[dataframe]>=0.15.2->tsfresh==0.15.2.dev32+g923288e) (0.7.1)
-    Requirement already satisfied: psutil>=5.0 in /usr/local/lib/python3.6/dist-packages (from distributed>=1.18.3->tsfresh==0.15.2.dev32+g923288e) (5.4.8)
-    Requirement already satisfied: tblib in /usr/local/lib/python3.6/dist-packages (from distributed>=1.18.3->tsfresh==0.15.2.dev32+g923288e) (1.6.0)
-    Requirement already satisfied: click>=6.6 in /usr/local/lib/python3.6/dist-packages (from distributed>=1.18.3->tsfresh==0.15.2.dev32+g923288e) (7.1.1)
-    Requirement already satisfied: cloudpickle>=0.2.2 in /usr/local/lib/python3.6/dist-packages (from distributed>=1.18.3->tsfresh==0.15.2.dev32+g923288e) (1.3.0)
-    Requirement already satisfied: pyyaml in /usr/local/lib/python3.6/dist-packages (from distributed>=1.18.3->tsfresh==0.15.2.dev32+g923288e) (3.13)
-    Requirement already satisfied: sortedcontainers!=2.0.0,!=2.0.1 in /usr/local/lib/python3.6/dist-packages (from distributed>=1.18.3->tsfresh==0.15.2.dev32+g923288e) (2.1.0)
-    Requirement already satisfied: tornado>=4.5.1 in /usr/local/lib/python3.6/dist-packages (from distributed>=1.18.3->tsfresh==0.15.2.dev32+g923288e) (4.5.3)
-    Requirement already satisfied: msgpack in /usr/local/lib/python3.6/dist-packages (from distributed>=1.18.3->tsfresh==0.15.2.dev32+g923288e) (1.0.0)
-    Requirement already satisfied: zict>=0.1.3 in /usr/local/lib/python3.6/dist-packages (from distributed>=1.18.3->tsfresh==0.15.2.dev32+g923288e) (2.0.0)
-    Collecting locket
-      Downloading https://files.pythonhosted.org/packages/d0/22/3c0f97614e0be8386542facb3a7dcfc2584f7b83608c02333bced641281c/locket-0.2.0.tar.gz
-    Requirement already satisfied: heapdict in /usr/local/lib/python3.6/dist-packages (from zict>=0.1.3->distributed>=1.18.3->tsfresh==0.15.2.dev32+g923288e) (1.0.1)
-    Building wheels for collected packages: tsfresh, locket
-      Building wheel for tsfresh (setup.py) ... [?25l[?25hdone
-      Created wheel for tsfresh: filename=tsfresh-0.15.2.dev32+g923288e-py2.py3-none-any.whl size=82188 sha256=db188fae393276626e21c7d2b145f91af0538234eb426a60cc9092cb37ca0e27
-      Stored in directory: /tmp/pip-ephem-wheel-cache-rmzy9tip/wheels/21/fe/93/890784d2b4444e938d4b85281c70cebe0b3e4736f5cfd5a07e
-      Building wheel for locket (setup.py) ... [?25l[?25hdone
-      Created wheel for locket: filename=locket-0.2.0-cp36-none-any.whl size=4040 sha256=3713ed1d0dbce3de5d848780706e71d7256892b4ab1ac1ebe322ff5de27612e0
-      Stored in directory: /root/.cache/pip/wheels/26/1e/e8/4fa236ec931b1a0cdd61578e20d4934d7bf188858723b84698
-    Successfully built tsfresh locket
-    Installing collected packages: tsfresh, locket, partd
-    Successfully installed locket-0.2.0 partd-1.1.0 tsfresh-0.15.2.dev32+g923288e
-
-
-
 ```
 #Construct the preferred input dataframe.
 from tsfresh.utilities.dataframe_functions import roll_time_series
@@ -3288,11 +3223,6 @@ model(df_feat) #noisy
 
     7  variables are found to be almost constant
     (208, 48)
-
-
-
-
-
     2064.7813982935995
 
 
