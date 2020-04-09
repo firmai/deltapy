@@ -22,7 +22,7 @@ pip install deltapy
 ```
 
 ### Function Glossary
-
+---------------
 
 **Transformation**
 ```python
@@ -238,7 +238,7 @@ Some of these categories are fluid and some techniques could fit into multiple b
 
 <a name="transformation"></a>
 
-##**(1) Transformation**
+## **(1) Transformation**
 
 Here transformation is any method that includes only one feature as an input to produce a new feature/s. Transformations can be applied to cross-section and time-series data. Some transformations are exclusive to time-series data (smoothing, filtering), but a handful of functions apply to both. 
 
