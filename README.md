@@ -7,13 +7,13 @@ Tabular augmentation is a new experimental space that makes use of novel and tra
 
 For most the [Colab Notebook](https://colab.research.google.com/drive/1-uJqGeKZfJegX0TmovhsO90iasyxZYiT) format might be preferred. I have enabled comments if you want to ask question or address any issues you uncover. For anything pressing use the issues tab. 
 
+To take full advantage of tabular augmentation for time-series you would perform the techniques in the following order: (1) transforming, (2) interacting, (3) mapping, (4) extracting, and (5) synthesising. What follows is a practical example of how the above methodology can be used. The purpose here is to establish a framework for table augmentation and to point and guide the user to existing packages.
+
 ![](assets/Tabularz.png)
 
 Data augmentation can be defined as any method that could increase the size or improve the quality of a dataset by generating new features or instances without the collection of additional data-points. Data augmentation is of particular importance in image classification tasks where additional data can be created by cropping, padding, or flipping existing images.
 
 Tabular cross-sectional and time-series prediction tasks can also benefit from augmentation. Here we divide tabular augmentation into columnular and row-wise methods. Row-wise methods are further divided into extraction and data synthesisation techniques, whereas columnular methods are divided into transformation, interaction, and mapping methods.  
-
-To take full advantage of tabular augmentation for time-series you would perform the techniques in the following order: (1) transforming, (2) interacting, (3) mapping, (4) extracting, and (5) synthesising. What follows is a practical example of how the above methodology can be used. The purpose here is to establish a framework for table augmentation and to point and guide the user to existing packages.
 
 See the [Skeleton Example](#example), for a combination of multiple methods that lead to a halfing of the mean squared error. 
 
