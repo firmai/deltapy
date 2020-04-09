@@ -486,7 +486,7 @@ Decomposition procedures are used in time series to describe the trend and seaso
 The base trend takes historical information into account and established moving averages; it does not have to be linear. To estimate the seasonal component for each season, simply average the detrended values for that season. If the seasonal variation looks constant, we should use the additive model. If the magintude is increasing as a function of time, we will use multiplicative. Here because it is predictive in nature we are using a one sided moving average, as opposed to a two-sided centred average. 
 
 
-```
+```python
 import statsmodels.api as sm
 
 def naive_dec(df, columns, freq=2):
@@ -511,7 +511,7 @@ There are a few filters available, closely associated with decompositions and sm
 The Baxter-King filter is intended to explicitly deal with the periodicity of the business cycle. By applying their band-pass filter to a series, they produce a new series that does not contain fluctuations at higher or lower than those of the business cycle. The parameters are arbitarily chosen. This method uses a centred moving average that has to be changed to a lagged moving average before it can be used as an input feature. The maximum period of oscillation should be used as the point to truncate the dataset, as that part of the time series does not incorporate all the required datapoints.
 
 
-```
+```python
 import statsmodels.api as sm
 
 def bkb(df, cols):
@@ -527,7 +527,7 @@ df_out = transform.bkb(df.copy(), ["Close"]); df_out.head()
 The Butterworth filter is a type of signal processing filter designed to have a frequency response as flat as possible in the passban. Like other filtersm the first few values have to be disregarded for accurate downstream prediction. Instead of disregarding these values on a per case basis, they can be diregarded in one chunk once the database of transformed features have been developed.
 
 
-```
+```python
 from scipy import signal, integrate
 def butter_lowpass(cutoff, fs=20, order=5):
     nyq = 0.5 * fs
@@ -549,7 +549,7 @@ df_out = transform.butter_lowpass_filter(df.copy(),["Close"],4); df_out.head()
 The Hilbert transform is a time-domain to time-domain transformation which shifts the phase of a signal by 90 degrees. It is also a centred measure and would be difficult to use in a time series prediction setting, unless it is recalculated on a per step basis or transformed to be based on historical values only.
 
 
-```
+```python
 from scipy import signal
 import numpy as np
 
@@ -569,7 +569,7 @@ The Kalman filter is better suited for estimating things that change over time. 
 
 
 
-```
+```python
 from pykalman import UnscentedKalmanFilter
 
 def kalman_feat(df, cols):
@@ -593,7 +593,7 @@ There are a range of functions for spectral analysis. You can use periodograms a
 This returns an array of sample frequencies and the power spectrum of x, or the power spectral density of x.
 
 
-```
+```python
 from scipy import signal
 def perd_feat(df, cols):
   for col in cols:
@@ -611,7 +611,7 @@ The FFT, or fast fourier transform is an algorithm that essentially uses convolu
 
 
 
-```
+```python
 def fft_feat(df, cols):
   for col in cols:
     fft_df = np.fft.fft(np.asarray(df[col].tolist()))
@@ -630,7 +630,7 @@ The waveform of a signal is the shape of its graph as a function of time.
 (i) Continuous Wave Radar
 
 
-```
+```python
 from scipy import signal
 def harmonicradar_cw(df, cols, fs,fc):
     for col in cols:
@@ -655,7 +655,7 @@ df_out = transform.harmonicradar_cw(df.copy(), ["Close"],0.3,0.2); df_out.head()
 Return a periodic sawtooth or triangle waveform.
 
 
-```
+```python
 def saw(df, cols):
   for col in cols:
     df[col+" SAW"] = signal.sawtooth(df[col])
@@ -671,7 +671,7 @@ A range of modification usually applied ot images, these values would have to be
 (i) Various Techniques
 
 
-```
+```python
 from tsaug import *
 def modify(df, cols):
   for col in cols:
@@ -703,7 +703,7 @@ Features that are calculated on a rolling basis over fixed window size.
 (i) Mean, Standard Deviation
 
 
-```
+```python
 def multiple_rolling(df, windows = [1,2], functions=["mean","std"], columns=None):
   windows = [1+a for a in windows]
   if not columns:
@@ -730,7 +730,7 @@ Lagged values from existing features.
 (i) Single Steps
 
 
-```
+```python
 def multiple_lags(df, start=1, end=3,columns=None):
   if not columns:
     columns = df.columns.to_list()
@@ -758,7 +758,7 @@ Prophet is a procedure for forecasting time series data based on an additive mod
 You can apply additive models to your training data but also interactive models like deep learning models. The problem is that these models have learned from future observations, there would this be a need to recalculate the time series on a running basis, or to only include the predicted as opposed to fitted values in future training and test sets.
 
 
-```
+```python
 from fbprophet import Prophet
 
 def prophet_feat(df, cols,date, freq,train_size=150):
@@ -799,7 +799,7 @@ Regression analysis is a set of statistical processes for estimating the relatio
 The lowess smoother is a robust locally weighted regression. The function fits a nonparametric regression curve to a scatterplot.
 
 
-```
+```python
 from math import ceil
 import numpy as np
 from scipy import linalg
@@ -839,7 +839,7 @@ Autoregression
 Autoregression is a time series model that uses observations from previous time steps as input to a regression equation to predict the value at the next time step
 
 
-```
+```python
 from statsmodels.tsa.ar_model import AR
 from timeit import default_timer as timer
 def autoregression(df, drop=None, settings={"autoreg_lag":4}):
@@ -878,7 +878,7 @@ Looking at interaction between different features. Here the methods employed are
 (i) Multiplication and Division
 
 
-```
+```python
 def muldiv(df, feature_list):
   for feat in feature_list:
     for feat_two in feature_list:
@@ -902,7 +902,7 @@ In statistics and machine learning, discretization refers to the process of conv
 The first method that will be applies here is a supersived discretiser. Discretisation with Decision Trees consists of using a decision tree to identify the optimal splitting points that would determine the bins or contiguous intervals.
 
 
-```
+```python
 from sklearn.tree import DecisionTreeRegressor
 
 def decision_tree_disc(df, cols, depth=4 ):
@@ -926,7 +926,7 @@ Normalising normally pertains to the scaling of data. There are many method avai
 In statistics, quantile normalization is a technique for making two distributions identical in statistical properties.
 
 
-```
+```python
 import numpy as np
 import pandas as pd
 
@@ -963,7 +963,7 @@ There are multiple types of distance functions like Euclidean, Mahalanobis, and 
 The Haversine (or great circle) distance is the angular distance between two points on the surface of a sphere.
 
 
-```
+```python
 from math import sin, cos, sqrt, atan2, radians
 def haversine_distance(row, lon="Open", lat="Close"):
     c_lat,c_long = radians(52.5200), radians(13.4050)
@@ -988,7 +988,7 @@ df_out['distance_central'] = df.apply(interact.haversine_distance,axis=1); df_ou
 Technical indicators are heuristic or mathematical calculations based on the price, volume, or open interest of a security or contract used by traders who follow technical analysis. By analyzing historical data, technical analysts use indicators to predict future price movements.
 
 
-```
+```python
 import ta
 
 def tech(df):
@@ -1007,12 +1007,12 @@ Genetic programming has shown promise in constructing feature by osing original 
 A symbolic transformer is a supervised transformer that begins by building a population of naive random formulas to represent a relationship.
 
 
-```
+```python
 df.head()
 ```
 
 
-```
+```python
 from gplearn.genetic import SymbolicTransformer
 
 def genetic_feat(df, num_gen=20, num_comp=10):
@@ -1049,7 +1049,7 @@ Eigendecomposition or sometimes spectral decomposition is the factorization of a
 Principal component analysis (PCA) is a statistical procedure that uses an orthogonal transformation to convert a set of observations of possibly correlated variables into a set of values of linearly uncorrelated variables called principal components.
 
 
-```
+```python
 def pca_feature(df, memory_issues=False,mem_iss_component=False,variance_or_components=0.80,n_components=5 ,drop_cols=None, non_linear=True):
     
   if non_linear:
@@ -1087,7 +1087,7 @@ These families of algorithms are useful to find linear relations between two mul
 Canonical-correlation analysis (CCA) is a way of inferring information from cross-covariance matrices.
 
 
-```
+```python
 from sklearn.cross_decomposition import CCA
 
 def cross_lag(df, drop=None, lags=1, components=4 ):
@@ -1125,7 +1125,7 @@ Functions that approximate the feature mappings that correspond to certain kerne
 Computes the additive chi-squared kernel between observations in X and Y The chi-squared kernel is computed between each pair of rows in X and Y. X and Y have to be non-negative.
 
 
-```
+```python
 from sklearn.kernel_approximation import AdditiveChi2Sampler
 
 def a_chi(df, drop=None, lags=1, sample_steps=2 ):
@@ -1163,7 +1163,7 @@ An autoencoder is a type of artificial neural network used to learn efficient da
 The simplest form of an autoencoder is a feedforward, non-recurrent neural network similar to single layer perceptrons that participate in multilayer perceptrons
 
 
-```
+```python
 from sklearn.preprocessing import minmax_scale
 import tensorflow as tf
 import numpy as np
@@ -1204,7 +1204,7 @@ df_out = mapper.encoder_dataset(df.copy(), ["Close_1"], 15); df_out.head()
 ```
 
 
-```
+```python
 df_out.head()
 ```
 
@@ -1217,7 +1217,7 @@ Manifold Learning can be thought of as an attempt to generalize linear framework
 Locally Linear Embedding is a method of non-linear dimensionality reduction. It tries to reduce these n-Dimensions while trying to preserve the geometric features of the original non-linear feature structure.
 
 
-```
+```python
 from sklearn.manifold import LocallyLinearEmbedding
 
 def lle_feat(df, drop=None, components=4):
@@ -1247,7 +1247,7 @@ Most clustering techniques start with a bottom up approach: each observation sta
 Feature agglomerative uses clustering to group together features that look very similar, thus decreasing the number of features.
 
 
-```
+```python
 import numpy as np
 from sklearn import datasets, cluster
 
@@ -1281,7 +1281,7 @@ Neighbouring points can be calculated using distance metrics like Hamming, Manha
 Unsupervised learner for implementing neighbor searches.
 
 
-```
+```python
 from sklearn.neighbors import NearestNeighbors
 
 def neigh_feat(df, drop, neighbors=6):
@@ -1323,7 +1323,7 @@ Lastly, when we want to double apply specific functions we can apply it as a tra
 Decorator
 
 
-```
+```python
 def set_property(key, value):
     """
     This method returns a decorator that sets the property key of the function to value
@@ -1345,7 +1345,7 @@ You can calculate the linear, non-linear and absolute energy of a time series. I
 Returns the absolute energy of the time series which is the sum over the squared values
 
 
-```
+```python
 #-> In Package
 def abs_energy(x):
 
@@ -1365,7 +1365,7 @@ Here we widely define distance measures as those that take a difference between 
 This function calculator is an estimate for a time series complexity.
 
 
-```
+```python
 #-> In Package
 def cid_ce(x, normalize):
 
@@ -1393,7 +1393,7 @@ Many alternatives to differecing exists, one can for example take the difference
 Returns the mean over the absolute differences between subsequent time series values.
 
 
-```
+```python
 #-> In Package
 def mean_abs_change(x):
     return np.mean(np.abs(np.diff(x)))
@@ -1410,7 +1410,7 @@ Features where the emphasis is on the rate of change.
 Returns the mean value of a central approximation of the second derivative
 
 
-```
+```python
 #-> In Package
 def _roll(a, shift):
     if not isinstance(a, np.ndarray):
@@ -1433,7 +1433,7 @@ Volatility is a statistical measure of the dispersion of a time-series.
 (i) Variance Larger than Standard Deviation
 
 
-```
+```python
 #-> In Package
 def variance_larger_than_standard_deviation(x):
 
@@ -1448,7 +1448,7 @@ extract.variance_larger_than_standard_deviation(df["Close"])
 Variability Index is a way to measure how smooth or 'variable' a time series is.
 
 
-```
+```python
 var_index_param = {"Volume":df["Volume"].values, "Open": df["Open"].values}
 
 @set_property("fctype", "combiner")
@@ -1484,7 +1484,7 @@ Features that emphasises a particular shape not ordinarily considered as a distr
 Boolean variable denoting if the distribution of x looks symmetric.
 
 
-```
+```python
 #-> In Package
 def symmetry_looking(x, param=[{"r": 0.2}]):
 
@@ -1505,7 +1505,7 @@ Looking at the occurance, and reocurance of defined values.
 (i) Has Duplicate Max
 
 
-```
+```python
 #-> In Package
 def has_duplicate_max(x):
     """
@@ -1532,7 +1532,7 @@ Autocorrelation, also known as serial correlation, is the correlation of a signa
 Partial autocorrelation is a summary of the relationship between an observation in a time series with observations at prior time steps with the relationships of intervening observations removed.
 
 
-```
+```python
 #-> In Package
 from statsmodels.tsa.stattools import acf, adfuller, pacf
 
@@ -1567,7 +1567,7 @@ Stochastic refers to a randomly determined process. Any features trying to captu
 The Augmented Dickey-Fuller test is a hypothesis test which checks whether a unit root is present in a time series sample.
 
 
-```
+```python
 #-> In Package
 def augmented_dickey_fuller(x, param=[{"attr": "teststat"}]):
 
@@ -1595,7 +1595,7 @@ extract.augmented_dickey_fuller(df["Close"])
 (i) Median of Magnitudes Skew
 
 
-```
+```python
 @set_property("fctype", "simple")
 @set_property("custom", True)
 def gskew(x):
@@ -1617,7 +1617,7 @@ extract.gskew(df["Close"])
 An iteratively weighted mean used in the Stetson variability index
 
 
-```
+```python
 stestson_param = {"weight":100., "alpha":2., "beta":2., "tol":1.e-6, "nmax":20}
 
 @set_property("fctype", "combiner")
@@ -1652,7 +1652,7 @@ extract.stetson_mean(df["Close"])
 (i) Lenght
 
 
-```
+```python
 #-> In Package
 def length(x):
     return len(x)
@@ -1667,7 +1667,7 @@ extract.length(df["Close"])
 Returns the number of values in x that are higher than the mean of x
 
 
-```
+```python
 #-> In Package
 def count_above_mean(x):
     m = np.mean(x)
@@ -1683,7 +1683,7 @@ extract.count_above_mean(df["Close"])
 Returns the length of the longest consecutive subsequence in x that is smaller than the mean of x
 
 
-```
+```python
 #-> In Package
 import itertools
 def get_length_sequences_where(x):
@@ -1708,7 +1708,7 @@ extract.longest_strike_below_mean(df["Close"])
 This is an astronomical feature, we count the number of three consecutive data points that are brighter or fainter than $2σ$ and normalize the number by $N−2$
 
 
-```
+```python
 woz_param = [{"consecutiveStar": n} for n in [2, 4]]
 
 @set_property("fctype", "combiner")
@@ -1750,7 +1750,7 @@ Returns the relative last location of the maximum value of x.
 last_location_of_minimum(x),
 
 
-```
+```python
 #-> In Package
 def last_location_of_maximum(x):
 
@@ -1769,7 +1769,7 @@ Any coefficient that are obtained from a model that might help in the prediction
 Calculates the fourier coefficients of the one-dimensional discrete Fourier Transform for real input.
 
 
-```
+```python
 #-> In Package
 def fft_coefficient(x, param = [{"coeff": 10, "attr": "real"}]):
 
@@ -1802,7 +1802,7 @@ extract.fft_coefficient(df["Close"])
 This feature calculator fits the unconditional maximum likelihood of an autoregressive AR(k) process.
 
 
-```
+```python
 #-> In Package
 from statsmodels.tsa.ar_model import AR
 
@@ -1852,7 +1852,7 @@ The relative index $i$ where $q\%$ of the mass of the time series $x$ lie left o
 .
 
 
-```
+```python
 #-> In Package
 def index_mass_quantile(x, param=[{"q": 0.3}]):
 
@@ -1878,7 +1878,7 @@ extract.index_mass_quantile(df["Close"])
 This feature calculator searches for different peaks in x.
 
 
-```
+```python
 from scipy.signal import cwt, find_peaks_cwt, ricker, welch
 
 cwt_param = [ka for ka in [2,6,9]]
@@ -1901,7 +1901,7 @@ The density, and more specifically the power spectral density of the signal desc
 This feature calculator estimates the cross power spectral density of the time series $x$ at different frequencies.
 
 
-```
+```python
 #-> In Package
 def spkt_welch_density(x, param=[{"coeff": 5}]):
     freq, pxx = welch(x, nperseg=min(len(x), 256))
@@ -1932,7 +1932,7 @@ Any measure of linearity that might make use of something like the linear least-
 Calculate a linear least-squares regression for the values of the time series versus the sequence from 0 to length of the time series minus one.
 
 
-```
+```python
 from scipy.stats import linregress
 
 #-> In Package
@@ -1958,7 +1958,7 @@ extract.linear_trend_timewise(df["Close"])
 (i) Schreiber Non-Linearity
 
 
-```
+```python
 #-> In Package
 def c3(x, lag=3):
     if not isinstance(x, (np.ndarray, pd.Series)):
@@ -1981,7 +1981,7 @@ Any feature looking at the complexity of a time series. This is typically used i
 Bins the values of x into max_bins equidistant bins.
 
 
-```
+```python
 #-> In Package
 def binned_entropy(x, max_bins=10):
     if not isinstance(x, (np.ndarray, pd.Series)):
@@ -1998,7 +1998,7 @@ extract.binned_entropy(df["Close"])
 SVD entropy is an indicator of the number of eigenvectors that are needed for an adequate explanation of the data set.
 
 
-```
+```python
 svd_param = [{"Tau": ta, "DE": de}
                       for ta in [4] 
                       for de in [3,6]]
@@ -2048,7 +2048,7 @@ extract.svd_entropy(df["Close"].values)
 The Complexity parameter represents the change in frequency. The parameter compares the signal's similarity to a pure sine wave, where the value converges to 1 if the signal is more similar. 
 
 
-```
+```python
 def _hjorth_mobility(epochs):
     diff = np.diff(epochs, axis=0)
     sigma0 = np.std(epochs, axis=0)
@@ -2076,7 +2076,7 @@ Fixed points and equilibria as identified from fitted models.
 Largest fixed point of dynamics $max\ {h(x)=0}$ estimated from polynomial $h(x)$ which has been fitted to the deterministic dynamics of Langevin model
 
 
-```
+```python
 #-> In Package
 def _estimate_friedrich_coefficients(x, m, r):
     assert m > 0, "Order of polynomial need to be positive integer, found {}".format(m)
@@ -2119,7 +2119,7 @@ Features derived from peaked values in either the positive or negative direction
 This feature is defined as the amount of times that the change in the signal amplitude exceeds a threshold.
 
 
-```
+```python
 will_param = [ka for ka in [0.2,3]]
 
 @set_property("fctype", "combiner")
@@ -2136,7 +2136,7 @@ Returns the largest distance from the median value, measured
     as a percentage of the median
 
 
-```
+```python
 perc_param = [{"base":ba, "exponent":exp} for ba in [3,5] for exp in [-0.1,-0.2]]
 
 @set_property("fctype", "combiner")
@@ -2162,7 +2162,7 @@ extract.percent_amplitude(df["Close"])
 Given the observed distribution of time lags cads, compute the probability that the next observation occurs within time minutes of an arbitrary epoch.
 
 
-```
+```python
 #-> fixes required
 import scipy.stats as stats
 
@@ -2185,7 +2185,7 @@ Calculates the crossing of the series with other defined values or series.
 The positioning of the edge point is located at the zero crossing of the first derivative of the filter.
 
 
-```
+```python
 zero_param = [0.01, 8]
 
 @set_property("fctype", "combiner")
@@ -2207,7 +2207,7 @@ These features are again from medical signal sciences, but under this category w
 DFA Calculate the Hurst exponent using DFA analysis.
 
 
-```
+```python
 from scipy.stats import kurtosis as _kurt
 from scipy.stats import skew as _skew
 import numpy as np
@@ -2269,7 +2269,7 @@ Closely related to entropy and complexity measures. Any measure that attempts to
 Fisher information is a statistical information concept distinct from, and earlier than, Shannon information in communication theory.
 
 
-```
+```python
 def _embed_seq(X, Tau, D):
 
     shape = (X.size - Tau * (D - 1), D)
@@ -2304,7 +2304,7 @@ In mathematics, more specifically in fractal geometry, a fractal dimension is a 
 Compute a Higuchi Fractal Dimension of a time series
 
 
-```
+```python
 hig_para = [{"Kmax": 3},{"Kmax": 5}]
 
 @set_property("fctype", "combiner")
@@ -2339,7 +2339,7 @@ extract.higuchi_fractal_dimension(df["Close"])
 Compute a Petrosian Fractal Dimension of a time series.
 
 
-```
+```python
 @set_property("fctype", "simple")
 @set_property("custom", True)
 def petrosian_fractal_dimension(epochs):
@@ -2376,7 +2376,7 @@ extract.petrosian_fractal_dimension(df["Close"])
 The Hurst exponent is used as a measure of long-term memory of time series. It relates to the autocorrelations of the time series, and the rate at which these decrease as the lag between pairs of values increases.
 
 
-```
+```python
 @set_property("fctype", "simple")
 @set_property("custom", True)
 def hurst_exponent(epochs):
@@ -2422,7 +2422,7 @@ extract.hurst_exponent(df["Close"])
 In mathematics the Lyapunov exponent or Lyapunov characteristic exponent of a dynamical system is a quantity that characterizes the rate of separation of infinitesimally close trajectories.
 
 
-```
+```python
 def _embed_seq(X, Tau, D):
     shape = (X.size - Tau * (D - 1), D)
     strides = (X.itemsize, Tau * X.itemsize)
@@ -2490,7 +2490,7 @@ Spectral analysis is analysis in terms of a spectrum of frequencies or related q
 The Whelch Method is an approach for spectral density estimation. It is used in physics, engineering, and applied mathematics for estimating the power of a signal at different frequencies.
 
 
-```
+```python
 from scipy import signal, integrate
 
 whelch_param = [100,200]
@@ -2514,7 +2514,7 @@ extract.whelch_method(df["Close"])
 ```
 
 
-```
+```python
 #-> Basically same as above
 freq_param = [{"fs":50, "sel":15},{"fs":200, "sel":20}]
 
@@ -2545,7 +2545,7 @@ extract.find_freq(df["Close"])
 Flux (or radiant flux) is the total amount of energy that crosses a unit area per unit time. Flux is an astronomical value, measured in joules per square metre per second (joules/m2/s), or watts per square metre. Here we provide the ratio of flux percentiles.
 
 
-```
+```python
 #-> In Package
 
 import math
@@ -2572,7 +2572,7 @@ extract.flux_perc(df["Close"])
 (i) Range of Cummulative Sum
 
 
-```
+```python
 @set_property("fctype", "simple")
 @set_property("custom", True)
 def range_cum_s(magnitude):
@@ -2595,7 +2595,7 @@ Structural features, potential placeholders for future research.
 The structure function of rotation measures (RMs) contains information on electron density and magnetic field fluctuations when used i astronomy. It becomes a custom feature when used with your own unique time series data.
 
 
-```
+```python
 from scipy.interpolate import interp1d
 
 struct_param = {"Volume":df["Volume"].values, "Open": df["Open"].values}
@@ -2660,7 +2660,7 @@ extract.structure_func(df["Close"],struct_param)
 (i) Kurtosis
 
 
-```
+```python
 #-> In Package
 def kurtosis(x):
 
@@ -2674,7 +2674,7 @@ extract.kurtosis(df["Close"])
 (ii) Stetson Kurtosis
 
 
-```
+```python
 @set_property("fctype", "simple")
 @set_property("custom", True)
 def stetson_k(x):
@@ -2693,7 +2693,7 @@ extract.stetson_k(df["Close"])
 Time-Series synthesisation (TSS) happens before the feature extraction step and Cross Sectional Synthesisation (CSS) happens after the feauture extraction step. Currently I will only include a CSS package, in the future, I would further work on developing out this section. This area still has a lot of performance and stability issues. In the future it might be a more viable candididate to improve prediction.
 
 
-```
+```python
 from lightgbm import LGBMRegressor
 from sklearn.metrics import mean_squared_error
 
@@ -2711,12 +2711,12 @@ def model(df_final):
 ```
 
 
-```
+```python
 !pip install ctgan
 ```
 
 
-```
+```python
 from ctgan import CTGANSynthesizer
 
 #discrete_columns = [""]
@@ -2727,7 +2727,7 @@ ctgan.fit(df,epochs=10) #15
 Random Benchmark
 
 
-```
+```python
 np.random.seed(1)
 df_in = df.copy()
 df_in["Close_1"] = np.random.permutation(df_in["Close_1"].values)
@@ -2737,7 +2737,7 @@ model(df_in)
 Generated Performance
 
 
-```
+```python
 df_gen = ctgan.sample(len(df_in)*100)
 model(df_gen)
 ```
@@ -2759,7 +2759,7 @@ The above framework of implementation will be consulted, but one still have to b
 Develop Model and Define Metric
 
 
-```
+```python
 from lightgbm import LGBMRegressor
 from sklearn.metrics import mean_squared_error
 
@@ -2779,17 +2779,14 @@ def model(df_final):
 Reload Data
 
 
-```
+```python
 df = data_copy()
 ```
 
 
-```
+```python
 model(df)
 ```
-
-
-
 
     302.61676570345287
 
@@ -2798,7 +2795,7 @@ model(df)
 **(1) (7) (i) Transformation - Decomposition - Naive**
 
 
-```
+```python
 ## If Inferred Seasonality is Too Large Default to Five
 seasons = transform.infer_seasonality(df["Close"],index=0) 
 df_out = transform.naive_dec(df.copy(), ["Close","Open"], freq=5)
@@ -2815,7 +2812,7 @@ model(df_out) #improvement
 **(1) (8) (i) Transformation - Filter - Baxter-King-Bandpass**
 
 
-```
+```python
 df_out = transform.bkb(df_out, ["Close","Low"])
 df_best = df_out.copy()
 model(df_out) #improvement
@@ -2831,7 +2828,7 @@ model(df_out) #improvement
 **(1) (3) (i) Transformation - Differentiation - Fractional**
 
 
-```
+```python
 df_out = transform.fast_fracdiff(df_out, ["Close_BPF"],0.5)
 model(df_out) #null
 ```
@@ -2846,7 +2843,7 @@ model(df_out) #null
 **(1) (1) (i) Transformation - Scaling - Robust Scaler**
 
 
-```
+```python
 df_out = df_out.dropna()
 df_out = transform.robust_scaler(df_out, drop=["Close_1"])
 model(df_out) #noisy
@@ -2862,7 +2859,7 @@ model(df_out) #noisy
 **(2) (2) (i) Interactions - Operator - Multiplication/Division**
 
 
-```
+```python
 df_out.head()
 ```
 
@@ -3012,7 +3009,7 @@ df_out.head()
 
 
 
-```
+```python
 df_out = interact.muldiv(df_out, ["Close","Open_NDDS","Low_BPF"]) 
 model(df_out) #noisy
 ```
@@ -3025,14 +3022,14 @@ model(df_out) #noisy
 
 
 
-```
+```python
 df_r = df_out.copy()
 ```
 
 **(2) (6) (i) Interactions - Speciality - Technical**
 
 
-```
+```python
 import ta
 df = interact.tech(df)
 df_out = pd.merge(df_out,  df.iloc[:,7:], left_index=True, right_index=True, how="left")
@@ -3041,7 +3038,7 @@ df_out = pd.merge(df_out,  df.iloc[:,7:], left_index=True, right_index=True, how
 **Clean Dataframe and Metric**
 
 
-```
+```python
 """Droping column where missing values are above a threshold"""
 df_out = df_out.dropna(thresh = len(df_out)*0.95, axis = "columns") 
 df_out = df_out.dropna()
@@ -3062,20 +3059,20 @@ model(df_out) #improve
 
 
 
-```
+```python
 from sklearn.decomposition import PCA, IncrementalPCA, KernelPCA
 
 df_out = transform.robust_scaler(df_out, drop=["Close_1"])
 ```
 
 
-```
+```python
 df_out = df_out.replace([np.inf, -np.inf], np.nan).ffill().fillna(0)
 df_out = mapper.pca_feature(df_out, drop_cols=["Close_1"], variance_or_components=0.9, n_components=8,non_linear=False)
 ```
 
 
-```
+```python
 model(df_out) #noisy but not too bad given the 10 fold dimensionality reduction
 ```
 
@@ -3098,7 +3095,7 @@ Here at first, I show the functions that have been added to the DeltaPy fork of 
 **(4) (10) (i) Extracting - Averages - GSkew**
 
 
-```
+```python
 extract.gskew(df_out["PCA_1"])
 ```
 
@@ -3112,7 +3109,7 @@ extract.gskew(df_out["PCA_1"])
 **(4) (21) (ii) Extracting - Entropy - SVD Entropy**
 
 
-```
+```python
 svd_param = [{"Tau": ta, "DE": de}
                       for ta in [4] 
                       for de in [3,6]]
@@ -3131,7 +3128,7 @@ extract.svd_entropy(df_out["PCA_1"],svd_param)
 **(4) (13) (ii) Extracting - Streaks - Wozniak**
 
 
-```
+```python
 woz_param = [{"consecutiveStar": n} for n in [2, 4]]
 
 extract.wozniak(df_out["PCA_1"],woz_param)
@@ -3147,7 +3144,7 @@ extract.wozniak(df_out["PCA_1"],woz_param)
 **(4) (28) (i) Extracting - Fractal - Higuchi**
 
 
-```
+```python
 hig_param = [{"Kmax": 3},{"Kmax": 5}]
 
 extract.higuchi_fractal_dimension(df_out["PCA_1"],hig_param)
@@ -3163,7 +3160,7 @@ extract.higuchi_fractal_dimension(df_out["PCA_1"],hig_param)
 **(4) (5) (ii) Extracting - Volatility - Variability Index**
 
 
-```
+```python
 var_index_param = {"Volume":df["Volume"].values, "Open": df["Open"].values}
 
 extract.var_index(df["Close"].values,var_index_param)
@@ -3180,11 +3177,11 @@ extract.var_index(df["Close"].values,var_index_param)
 **Time Series Extraction**
 
 
-```
+```python
 !pip install git+git://github.com/firmai/tsfresh.git
 ```
 
-```
+```python
 #Construct the preferred input dataframe.
 from tsfresh.utilities.dataframe_functions import roll_time_series
 df_out["ID"] = 0
@@ -3196,7 +3193,7 @@ df_ts = df_ts[df_ts['ID'].isin(counts[counts > periods].index)]
 ```
 
 
-```
+```python
 #Perform extraction
 from tsfresh.feature_extraction import extract_features, CustomFCParameters
 settings_dict = CustomFCParameters()
@@ -3208,7 +3205,7 @@ df_feat = extract_features(df_ts.drop(["Close_1"],axis=1),default_fc_parameters=
 
 
 
-```
+```python
 # Cleaning operations
 import pandasvault as pv
 df_feat2 = df_feat.copy()
@@ -3228,7 +3225,7 @@ model(df_feat) #noisy
 
 
 
-```
+```python
 from tsfresh import select_features
 from tsfresh.utilities.dataframe_functions import impute
 
@@ -3250,7 +3247,7 @@ model(df_feat_2) #improvement (b/ not an augmentation method)
 Like in this step, after (1), (2), (3), (4) and (5), you can often circle back to the initial steps to normalise the data and dimensionally reduce the data for the final model. 
 
 
-```
+```python
 import numpy as np
 from sklearn import datasets, cluster
 
@@ -3281,7 +3278,7 @@ model(df_final) #noisy
 **Final Model** After Applying 13 Arbitary Augmentation Techniques
 
 
-```
+```python
 model(df_final) #improvement
 ```
 
@@ -3295,7 +3292,7 @@ model(df_final) #improvement
 **Original Model** Before Augmentation
 
 
-```
+```python
 df_org = df.iloc[:,:7][df.index.isin(df_final.index)]
 model(df_org)
 ```
@@ -3310,7 +3307,7 @@ model(df_org)
 **Best Model** After Developing 8 Augmenting Features
 
 
-```
+```python
 df_best = df_best.replace([np.inf, -np.inf], np.nan).ffill().fillna(0)
 model(df_best)
 ```
