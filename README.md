@@ -1,5 +1,5 @@
 
-# DeltaPy⁠⁠ — Tabular Data Augmentation
+# DeltaPy⁠⁠ — Tabular Data Augmentation & Feature Engineering
 
 ### Introduction
 
