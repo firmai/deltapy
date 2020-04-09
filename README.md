@@ -123,20 +123,20 @@ The benefit of pipelines become clear when one wants to apply multiple augmentat
 
 
 ```python
-!pip install deltapy
+pip install deltapy
 ```
 
 
 ```python
-!pip install pykalman
-!pip install tsaug
-!pip install ta
-!pip install tsaug
-!pip install pandasvault
-!pip install gplearn
-!pip install ta
-!pip install seasonal
-!pip install pandasvault
+pip install pykalman
+pip install tsaug
+pip install ta
+pip install tsaug
+pip install pandasvault
+pip install gplearn
+pip install ta
+pip install seasonal
+pip install pandasvault
 ```
 
 ### Data and Package Load
@@ -2714,7 +2714,7 @@ def model(df_final):
 
 
 ```python
-!pip install ctgan
+pip install ctgan
 ```
 
 
@@ -3180,7 +3180,7 @@ extract.var_index(df["Close"].values,var_index_param)
 
 
 ```python
-!pip install git+git://github.com/firmai/tsfresh.git
+pip install git+git://github.com/firmai/tsfresh.git
 ```
 
 ```python
