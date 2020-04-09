@@ -31,7 +31,7 @@ df_out = transform.standard_scaler(df.copy(), drop=["Close"]); df_out.head()
 df_out = transform.fast_fracdiff(df.copy(), ["Close","Open"],0.5); df_out.head()
 df_out = transform.windsorization(df.copy(),"Close",para,strategy='both'); df_out.head()
 df_out = transform.operations(df.copy(),["Close"]); df_out.head()
-df_out= transform.triple_exponential_smoothing(df.copy(),["Close"], 12, .2,.2,.2,0); 
+df_out = transform.triple_exponential_smoothing(df.copy(),["Close"], 12, .2,.2,.2,0); 
 df_out = transform.naive_dec(df.copy(), ["Close","Open"]); df_out.head()
 df_out = transform.bkb(df.copy(), ["Close"]); df_out.head()
 df_out = transform.butter_lowpass_filter(df.copy(),["Close"],4); df_out.head()
