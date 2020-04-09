@@ -13,6 +13,8 @@ To take full advantage of tabular augmentation for time-series you would perform
 
 See the [Skeleton Example](#example), for a combination of multiple methods that lead to a halfing of the mean squared error. 
 
+![](assets/Tabularz.png)
+
 ### Function Glossary
 
 
@@ -114,12 +116,12 @@ The benefit of pipelines become clear when one wants to apply multiple augmentat
 **Notebook Dependencies**
 
 
-```
+```python
 !pip install deltapy
 ```
 
 
-```
+```python
 !pip install pykalman
 !pip install tsaug
 !pip install ta
@@ -134,7 +136,7 @@ The benefit of pipelines become clear when one wants to apply multiple augmentat
 ### Data and Package Load
 
 
-```
+```python
 import pandas as pd
 import numpy as np
 from deltapy import transform, interact, mapper, extract 
@@ -251,7 +253,7 @@ There are a multitude of scaling methods available. Scaling generally gets appli
 Scaling according to the interquartile range, making it robust to outliers.
 
 
-```
+```python
 def robust_scaler(df, drop=None,quantile_range=(25, 75) ):
     if drop:
       keep = df[drop]
@@ -276,7 +278,7 @@ When using a standardisation method, it is often more effective when the attribu
 Standardize features by removing the mean and scaling to unit variance
 
 
-```
+```python
 def standard_scaler(df,drop ):
     if drop:
       keep = df[drop]
@@ -301,7 +303,7 @@ Computing the differences between consecutive observation, normally used to obta
 Fractional differencing, allows us to achieve stationarity while maintaining the maximum amount of memory compared to integer differencing.
 
 
-```
+```python
 import pylab as pl
 
 def fast_fracdiff(x, cols, d):
@@ -332,7 +334,7 @@ Any method that provides sets a floor and a cap to a feature's value. Capping ca
 The transformation of features by limiting extreme values in the statistical data to reduce the effect of possibly spurious outliers by replacing it with a certain percentile value.
 
 
-```
+```python
 def outlier_detect(data,col,threshold=1,method="IQR"):
   
     if method == "IQR":
@@ -390,7 +392,7 @@ Operations here are treated like traditional transformations. It is the replacem
 (i) Power, Log, Recipricol, Square Root
 
 
-```
+```python
 def operations(df,features):
   df_new = df[features]
   df_new = df_new - df_new.min()
@@ -423,7 +425,7 @@ Here we maintain that any method that has a component of historical averaging is
 The Holt-Winters seasonal method comprises the forecast equation and three smoothing equations — one for the level $ℓt$, one for the trend &bt&, and one for the seasonal component $st$. This particular version is performed by looking at the last 12 periods. For that reason, the first 12 records should be disregarded because they can't make use of the required window size for a fair calculation. The calculation is such that values are still provided for those periods based on whatever data might be available. 
 
 
-```
+```python
 def initial_trend(series, slen):
     sum = 0.0
     for i in range(slen):
