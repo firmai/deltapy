@@ -119,6 +119,8 @@ Test sets should ideally not be preprocessed with the training data, as in such 
 
 The benefit of pipelines become clear when one wants to apply multiple augmentation methods. It makes it easy to learn the parameters and then apply them widely. For the most part, this notebook does not concern itself with 'peaking ahead' or pipelines, for some functions, one might have to restructure to code and make use of open source pacakages to create your preferred solution.
 
+Citation
+----------
 ```
 @software{deltapy,
   title = {{DeltaPy}: Tabular Data Augmentation Framework},
@@ -128,7 +130,7 @@ The benefit of pipelines become clear when one wants to apply multiple augmentat
   date = {2020-04-11},
 }
 ```
-
+-----------------
 
 **Notebook Dependencies**
 
