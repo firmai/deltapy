@@ -21,7 +21,7 @@ See the [Skeleton Example](#example), for a combination of multiple methods that
 pip install deltapy
 ```
 
-Citation
+#### Citation
 ----------
 ```
 @software{deltapy,
