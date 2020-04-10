@@ -130,6 +130,8 @@ Citation
   date = {2020-04-11},
 }
 ```
+
+Documentation by Example
 -----------------
 
 **Notebook Dependencies**
