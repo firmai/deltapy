@@ -21,6 +21,14 @@ See the [Skeleton Example](#example), for a combination of multiple methods that
 pip install deltapy
 ```
 
+@software{deltapy,
+  title = {{DeltaPy}: Tabular Data Augmentation Framework},
+  author = {Snow, Derek},
+  url = {https://github.com/firmai/deltapy/},
+  version = {0.1.0},
+  date = {2020-04-11},
+}
+
 ### Function Glossary
 ---------------
 
