@@ -123,7 +123,7 @@ Citation
 ----------
 ```
 @software{deltapy,
-  title = {{DeltaPy}: Tabular Data Augmentation Framework},
+  title = {{DeltaPy}: Tabular Data Augmentation},
   author = {Snow, Derek},
   url = {https://github.com/firmai/deltapy/},
   version = {0.1.0},
