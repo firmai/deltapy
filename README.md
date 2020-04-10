@@ -17,12 +17,13 @@ Tabular cross-sectional and time-series prediction tasks can also benefit from a
 
 See the [Skeleton Example](#example), for a combination of multiple methods that lead to a halfing of the mean squared error. 
 
+
+#### Installation & Citation
+----------
 ```
 pip install deltapy
 ```
 
-#### Citation
-----------
 ```
 @software{deltapy,
   title = {{DeltaPy}: Tabular Data Augmentation},
