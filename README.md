@@ -21,14 +21,6 @@ See the [Skeleton Example](#example), for a combination of multiple methods that
 pip install deltapy
 ```
 
-@software{deltapy,
-  title = {{DeltaPy}: Tabular Data Augmentation Framework},
-  author = {Snow, Derek},
-  url = {https://github.com/firmai/deltapy/},
-  version = {0.1.0},
-  date = {2020-04-11},
-}
-
 ### Function Glossary
 ---------------
 
@@ -126,6 +118,17 @@ extract.stetson_k(df["Close"])
 Test sets should ideally not be preprocessed with the training data, as in such a way one could be peaking ahead in the training data. The preprocessing parameters should be identified on the test set and then applied on the test set, i.e., the test set should not have an impact on the transformation applied. As an example, you would learn the parameters of PCA decomposition on the training set and then apply the parameters to both the train and the test set. 
 
 The benefit of pipelines become clear when one wants to apply multiple augmentation methods. It makes it easy to learn the parameters and then apply them widely. For the most part, this notebook does not concern itself with 'peaking ahead' or pipelines, for some functions, one might have to restructure to code and make use of open source pacakages to create your preferred solution.
+
+```
+@software{deltapy,
+  title = {{DeltaPy}: Tabular Data Augmentation Framework},
+  author = {Snow, Derek},
+  url = {https://github.com/firmai/deltapy/},
+  version = {0.1.0},
+  date = {2020-04-11},
+}
+```
+
 
 **Notebook Dependencies**
 
