@@ -3,7 +3,7 @@
 
 ### Introduction
 
-Tabular augmentation is a new experimental space that makes use of novel and traditional data generation and synthesisation techniques to improve model prediction success. It is in essence a process of modular feature engineering and observation engineering while emphasising the order of augmentation to achieve the best predicted outcome from a given information set.
+Tabular augmentation is a new experimental space that makes use of novel and traditional data generation and synthesisation techniques to improve model prediction success. It is in essence a process of modular feature engineering and observation engineering while emphasising the order of augmentation to achieve the best predicted outcome from a given information set. DeltaPy was created with finance applications in mind, but it can be broadly applied to any data-rich environment.
 
 To take full advantage of tabular augmentation for time-series you would perform the techniques in the following order: **(1) transforming**, **(2) interacting**, **(3) mapping**, **(4) extracting**, and **(5) synthesising**. What follows is a practical example of how the above methodology can be used. The purpose here is to establish a framework for table augmentation and to point and guide the user to existing packages.
 
