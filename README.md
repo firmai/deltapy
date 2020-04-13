@@ -3346,3 +3346,5 @@ Quite naturally this example suffers from dimensionality issues with array shape
 
 Nonetheless, in this example, *Transformation, Interactions* and *Mappings* (applied to exraction output) performed fairly well. *Extraction* augmentation was overkill, but created a reasonable model when dimensionally reduced. A better selection of one of the 50+ augmentation methods and the order of augmentation could further help improve the outcome if robustly tested against development sets.
 
+
+[[1]](https://colab.research.google.com/drive/1tstO4fja9wRWjkPgjxRYr9MEvYXTx7fA) DeltaPy Development 
