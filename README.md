@@ -130,7 +130,7 @@ extract.stetson_k(df["Close"])
 
 Test sets should ideally not be preprocessed with the training data, as in such a way one could be peaking ahead in the training data. The preprocessing parameters should be identified on the test set and then applied on the test set, i.e., the test set should not have an impact on the transformation applied. As an example, you would learn the parameters of PCA decomposition on the training set and then apply the parameters to both the train and the test set. 
 
-The benefit of pipelines become clear when one wants to apply multiple augmentation methods. It makes it easy to learn the parameters and then apply them widely. For the most part, this notebook does not concern itself with 'peaking ahead' or pipelines, for some functions, one might have to restructure to code and make use of open source pacakages to create your preferred solution.
+The benefit of pipelines become clear when one wants to apply multiple augmentation methods. It makes it easy to learn the parameters and then apply them widely. For the most part, this notebook does not concern itself with 'peaking ahead' or pipelines, for some functions, one might have to restructure to code and make use of open source packages to create your preferred solution.
 
 
 Documentation by Example
@@ -176,7 +176,7 @@ def data_copy():
 df = data_copy(); df.head()
 ```
 
-Some of these categories are fluid and some techniques could fit into multiple buckets. This is an attempt to find an exhaustive number of techniques, but not an exhuastive list of implementations of the techniques. For example, there are thousands of ways to smooth a time-series, but we have only includes 1-2 techniques of interest under each category.
+Some of these categories are fluid and some techniques could fit into multiple buckets. This is an attempt to find an exhaustive number of techniques, but not an exhaustive list of implementations of the techniques. For example, there are thousands of ways to smooth a time-series, but we have only includes 1-2 techniques of interest under each category.
 
 ### **(1) [<font color="black">Transformation:</font>](#transformation)**
 -----------------
@@ -223,7 +223,7 @@ Some of these categories are fluid and some techniques could fit into multiple b
 4. Derivative
 5. Volatility
 6. Shape
-7. Occurence
+7. Occurrence
 8. Autocorrelation
 9. Stochasticity
 10. Averages
@@ -265,11 +265,11 @@ There are some packaged in Python that dynamically create time series and extrac
 
 In this section we will include a list of all types of transformations, those that only use present information (operations), those that incorporate all values (interpolation methods), those that only include past values (smoothing functions), and those that incorporate a subset window of lagging and leading values (select filters). Only those that use historical values or are turned into prediction methods can be used out of the box. The entire time series can be used in the model development process for historical value methods, and only the forecasted values can be used for prediction models. 
 
-Curve fitting can involve either interpolation, where an exact fit to the data is required, or smoothing, in which a "smooth" function is constructed that approximately fits the data. When using an interpolation method, you are taking future information into account e.g, cubic spline. You can use interpolation methods to forecast into the future (extrapolation), and then use those forecasts in a training set. Or you could recalulate the interpolation for each time step and then extract features out of that series (extraction method). Interpolation and other forward-looking methods can be used if they are turned into prediction problems, then the forecasted values can be trained and tested on, and the fitted data can be diregarded. In the list presented below the first five methods can be used for cross-section and time series data, after that the time-series only methods follow.
+Curve fitting can involve either interpolation, where an exact fit to the data is required, or smoothing, in which a "smooth" function is constructed that approximately fits the data. When using an interpolation method, you are taking future information into account e.g, cubic spline. You can use interpolation methods to forecast into the future (extrapolation), and then use those forecasts in a training set. Or you could recalculate the interpolation for each time step and then extract features out of that series (extraction method). Interpolation and other forward-looking methods can be used if they are turned into prediction problems, then the forecasted values can be trained and tested on, and the fitted data can be diregarded. In the list presented below the first five methods can be used for cross-section and time series data, after that the time-series only methods follow.
 
 #### **(1) Scaling/Normalisation**
 
-There are a multitude of scaling methods available. Scaling generally gets applied to the entire dataset and is especially necessary for certain algorithms. K-means make use of euclidean distance hence the need for scaling. For PCA because we are trying to identify the feature with maximus variance we also need scaling. Similarly, we need scaled features for gradient descent. Any algorithm that is not based on a distance measure is not affected by feature scaling. Some of the methods include range scalers like minimum-maximum scaler, maximum absolute scaler or even standardisation methods like the standard scaler can be used for scaling. The example used here is robust scaler. Normalisation is a good technique when you don't know the distribution of the data. Scaling looks into the future, so parameters have to be training on a tranining set and applied to a test set.
+There are a multitude of scaling methods available. Scaling generally gets applied to the entire dataset and is especially necessary for certain algorithms. K-means make use of euclidean distance hence the need for scaling. For PCA because we are trying to identify the feature with maximus variance we also need scaling. Similarly, we need scaled features for gradient descent. Any algorithm that is not based on a distance measure is not affected by feature scaling. Some of the methods include range scalers like minimum-maximum scaler, maximum absolute scaler or even standardisation methods like the standard scaler can be used for scaling. The example used here is robust scaler. Normalisation is a good technique when you don't know the distribution of the data. Scaling looks into the future, so parameters have to be training on a training set and applied to a test set.
 
 (i) Robust Scaler
 
@@ -347,7 +347,7 @@ df_out = transform.fast_fracdiff(df.copy(), ["Close","Open"],0.5); df_out.head()
 
 #### **(4) Capping**
 
-Any method that provides sets a floor and a cap to a feature's value. Capping can affect the distribution of data, so it should not be exagerated. One can cap values by using the average, by using the max and min values, or by an arbitary extreme value.
+Any method that provides sets a floor and a cap to a feature's value. Capping can affect the distribution of data, so it should not be exagerated. One can cap values by using the average, by using the max and min values, or by an arbitrary extreme value.
 
 
 
@@ -502,7 +502,7 @@ Decomposition procedures are used in time series to describe the trend and seaso
 
 (i) Naive Decomposition
 
-The base trend takes historical information into account and established moving averages; it does not have to be linear. To estimate the seasonal component for each season, simply average the detrended values for that season. If the seasonal variation looks constant, we should use the additive model. If the magintude is increasing as a function of time, we will use multiplicative. Here because it is predictive in nature we are using a one sided moving average, as opposed to a two-sided centred average. 
+The base trend takes historical information into account and established moving averages; it does not have to be linear. To estimate the seasonal component for each season, simply average the detrended values for that season. If the seasonal variation looks constant, we should use the additive model. If the magnitude is increasing as a function of time, we will use multiplicative. Here because it is predictive in nature we are using a one sided moving average, as opposed to a two-sided centred average. 
 
 
 ```python
@@ -527,7 +527,7 @@ There are a few filters available, closely associated with decompositions and sm
 
 (i) Baxter-King Bandpass
 
-The Baxter-King filter is intended to explicitly deal with the periodicity of the business cycle. By applying their band-pass filter to a series, they produce a new series that does not contain fluctuations at higher or lower than those of the business cycle. The parameters are arbitarily chosen. This method uses a centred moving average that has to be changed to a lagged moving average before it can be used as an input feature. The maximum period of oscillation should be used as the point to truncate the dataset, as that part of the time series does not incorporate all the required datapoints.
+The Baxter-King filter is intended to explicitly deal with the periodicity of the business cycle. By applying their band-pass filter to a series, they produce a new series that does not contain fluctuations at higher or lower than those of the business cycle. The parameters are arbitrarily chosen. This method uses a centred moving average that has to be changed to a lagged moving average before it can be used as an input feature. The maximum period of oscillation should be used as the point to truncate the dataset, as that part of the time series does not incorporate all the required datapoints.
 
 
 ```python
@@ -767,7 +767,7 @@ df_out = transform.multiple_lags(df, start=1, end=3, columns=["Close"]); df_out.
 
 #### **(13) Forecast Model**
 
-There are a range of time series model that can be implemented like AR, MA, ARMA, ARIMA, SARIMA, SARIMAX, VAR, VARMA, VARMAX, SES, and HWES. The models can be divided into autoregressive models and smoothing models. In an autoregression model, we forecast the variable of interest using a linear combination of past values of the variable. Each method might requre specific tuning and parameters to suit your prediction task. You need to drop a certain amount of historical data that you use during the fitting stage. Models that take seasonaity into account need more training data.
+There are a range of time series model that can be implemented like AR, MA, ARMA, ARIMA, SARIMA, SARIMAX, VAR, VARMA, VARMAX, SES, and HWES. The models can be divided into autoregressive models and smoothing models. In an autoregression model, we forecast the variable of interest using a linear combination of past values of the variable. Each method might requre specific tuning and parameters to suit your prediction task. You need to drop a certain amount of historical data that you use during the fitting stage. Models that take seasonality into account need more training data.
 
 
 (i) Prophet
@@ -1081,7 +1081,7 @@ def pca_feature(df, memory_issues=False,mem_iss_component=False,variance_or_comp
     else:
       if variance_or_components>1:
         pca = PCA(n_components=variance_or_components) 
-      else: # automted selection based on variance
+      else: # automated selection based on variance
         pca = PCA(n_components=variance_or_components,svd_solver="full") 
   if drop_cols:
     X_pca = pca.fit_transform(df.drop(drop_cols,axis=1))
@@ -1405,7 +1405,7 @@ extract.cid_ce(df["Close"], True)
 
 #### **(3) Differencing**
 
-Many alternatives to differecing exists, one can for example take the difference of every other value, take the squared diffence, take the fractional difference, or like our example, take the mean absolute difference.
+Many alternatives to differencing exists, one can for example take the difference of every other value, take the squared difference, take the fractional difference, or like our example, take the mean absolute difference.
 
 (i) Mean Absolute Change
 
@@ -1517,9 +1517,9 @@ def symmetry_looking(x, param=[{"r": 0.2}]):
 extract.symmetry_looking(df["Close"])
 ```
 
-#### **(7) Occurence**
+#### **(7) Occurrence**
 
-Looking at the occurance, and reocurance of defined values.
+Looking at the occurrence, and reoccurence of defined values.
 
 (i) Has Duplicate Max
 
@@ -1579,7 +1579,7 @@ extract.partial_autocorrelation(df["Close"])
 
 #### **(9) Stochasticity**
 
-Stochastic refers to a randomly determined process. Any features trying to capture stocahsticity by degree or type are included under this branch.
+Stochastic refers to a randomly determined process. Any features trying to capture stochasticity by degree or type are included under this branch.
 
 (i) Augmented Dickey Fuller
 
@@ -1993,7 +1993,7 @@ extract.c3(df["Close"])
 
 #### **(21) Entropy**
 
-Any feature looking at the complexity of a time series. This is typically used in medical signal disciplines (EEG, EMG). There are multile types of measures like spectral entropy, permutation entropy, sample entropy, approximate entropy, Lempel-Ziv complexity and other. This includes entropy measures and there derivations.
+Any feature looking at the complexity of a time series. This is typically used in medical signal disciplines (EEG, EMG). There are multiple types of measures like spectral entropy, permutation entropy, sample entropy, approximate entropy, Lempel-Ziv complexity and other. This includes entropy measures and there derivations.
 
 (i) Binned Entropy
 
@@ -2709,7 +2709,7 @@ extract.stetson_k(df["Close"])
 
 ## **(5) Synthesise**
 
-Time-Series synthesisation (TSS) happens before the feature extraction step and Cross Sectional Synthesisation (CSS) happens after the feauture extraction step. Currently I will only include a CSS package, in the future, I would further work on developing out this section. This area still has a lot of performance and stability issues. In the future it might be a more viable candididate to improve prediction.
+Time-Series synthesisation (TSS) happens before the feature extraction step and Cross Sectional Synthesisation (CSS) happens after the feature extraction step. Currently I will only include a CSS package, in the future, I would further work on developing out this section. This area still has a lot of performance and stability issues. In the future it might be a more viable candidate to improve prediction.
 
 
 ```python
@@ -2767,7 +2767,7 @@ As expected a cross-sectional technique, does not work well on time-series data,
 
 ## **(6) Skeleton Example**
 
-Here I will perform tabular agumenting methods on a small dataset single digit features and around 250 instances. This is not necessarily the best sized dataset to highglight the performance of tabular augmentation as some method like extraction would be overkill as it would lead to dimensionality problems. It is also good to know that there are close to infinite number of ways to perform these augmentation methods. In the future, automated augmentation methods can guide the exmperiment process. 
+Here I will perform tabular agumenting methods on a small dataset single digit features and around 250 instances. This is not necessarily the best sized dataset to highlight the performance of tabular augmentation as some method like extraction would be overkill as it would lead to dimensionality problems. It is also good to know that there are close to infinite number of ways to perform these augmentation methods. In the future, automated augmentation methods can guide the experiment process. 
 
 The approach taken in this skeleton is to develop running models that are tested after each augmentation to highlight what methods might work well on this particular dataset. The metric we will use is mean squared error. In this implementation we do not have special hold-out sets.
 
@@ -3106,7 +3106,7 @@ model(df_out) #noisy but not too bad given the 10 fold dimensionality reduction
 
 Here at first, I show the functions that have been added to the DeltaPy fork of tsfresh. You have to add your own personal adjustments based on the features you would like to construct. I am using self-developed features, but you can also use TSFresh's community functions.
 
-*The following files have been appropropriately ammended (Get in contact for advice)*
+*The following files have been appropriately ammended (Get in contact for advice)*
 1. https://github.com/firmai/tsfresh/blob/master/tsfresh/feature_extraction/settings.py
 1. https://github.com/firmai/tsfresh/blob/master/tsfresh/feature_extraction/feature_calculators.py
 1. https://github.com/firmai/tsfresh/blob/master/tsfresh/feature_extraction/extraction.py
@@ -3294,7 +3294,7 @@ model(df_final) #noisy
 
 
 
-**Final Model** After Applying 13 Arbitary Augmentation Techniques
+**Final Model** After Applying 13 Arbitrary Augmentation Techniques
 
 
 ```python
@@ -3340,11 +3340,11 @@ model(df_best)
 
 **Commentary**
 
-There are countless ways in which the current model can be improved, this can take on an automated process where all techniques are tested against a hold out set, for example, we can perform the operation below, and even though it improves the score here, there is a need for more robust tests. The skeleton example above is not meant to highglight the performance of the package. It simply serves as an example of how one can go about applying augmentation methods. 
+There are countless ways in which the current model can be improved, this can take on an automated process where all techniques are tested against a hold out set, for example, we can perform the operation below, and even though it improves the score here, there is a need for more robust tests. The skeleton example above is not meant to highlight the performance of the package. It simply serves as an example of how one can go about applying augmentation methods. 
 
 Quite naturally this example suffers from dimensionality issues with array shapes reaching ```(208, 48)```, furthermore you would need a sample that is at least 50-100 times larger before machine learning methods start to make sense.
 
-Nonetheless, in this example, *Transformation, Interactions* and *Mappings* (applied to exraction output) performed fairly well. *Extraction* augmentation was overkill, but created a reasonable model when dimensionally reduced. A better selection of one of the 50+ augmentation methods and the order of augmentation could further help improve the outcome if robustly tested against development sets.
+Nonetheless, in this example, *Transformation, Interactions* and *Mappings* (applied to extraction output) performed fairly well. *Extraction* augmentation was overkill, but created a reasonable model when dimensionally reduced. A better selection of one of the 50+ augmentation methods and the order of augmentation could further help improve the outcome if robustly tested against development sets.
 
 
 [[1]](https://colab.research.google.com/drive/1tstO4fja9wRWjkPgjxRYr9MEvYXTx7fA) DeltaPy Development 
