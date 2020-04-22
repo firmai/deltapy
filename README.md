@@ -34,6 +34,11 @@ pip install deltapy
 }
 ```
 
+```
+ Snow, Derek, DeltaPy: A Framework for Tabular Data Augmentation in Python (April 22, 2020). Available at SSRN: https://ssrn.com/abstract=3582219
+```
+
+
 ### Function Glossary
 ---------------
 
