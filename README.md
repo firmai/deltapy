@@ -1,6 +1,8 @@
 
 # DeltaPy⁠⁠ — Tabular Data Augmentation & Feature Engineering
 
+[![DOI](https://zenodo.org/badge/253993655.svg)](https://zenodo.org/badge/latestdoi/253993655)
+
 ### Introduction
 
 Tabular augmentation is a new experimental space that makes use of novel and traditional data generation and synthesisation techniques to improve model prediction success. It is in essence a process of modular feature engineering and observation engineering while emphasising the order of augmentation to achieve the best predicted outcome from a given information set. DeltaPy was created with finance applications in mind, but it can be broadly applied to any data-rich environment.
