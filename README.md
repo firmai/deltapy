@@ -1,6 +1,8 @@
 
 # DeltaPy⁠⁠ — Tabular Data Augmentation & Feature Engineering
 
+[![Downloads](https://pepy.tech/badge/deltapy)](https://pepy.tech/project/deltapy)
+
 [![DOI](https://zenodo.org/badge/253993655.svg)](https://zenodo.org/badge/latestdoi/253993655)
 
 ### Introduction
