@@ -3,6 +3,8 @@
 
 [![Downloads](https://pepy.tech/badge/deltapy)](https://pepy.tech/project/deltapy)
 
+[![Downloads](https://static.pepy.tech/personalized-badge/requests?period=total&units=abbreviation&left_color=lightgrey&right_color=grey&left_text=Downloads)](https://pepy.tech/project/requests)
+
 [![DOI](https://zenodo.org/badge/253993655.svg)](https://zenodo.org/badge/latestdoi/253993655)
 
 ### Introduction
