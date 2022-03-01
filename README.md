@@ -70,8 +70,6 @@ df_out = transform.fft_feat(df.copy(), ["Close"]); df_out.head()
 df_out = transform.harmonicradar_cw(df.copy(), ["Close"],0.3,0.2); df_out.head()
 df_out = transform.saw(df.copy(),["Close","Open"]); df_out.head()
 df_out = transform.modify(df.copy(),["Close"]); df_out.head()
-df_out = transform.multiple_rolling(df, columns=["Close"]); df_out.head()
-df_out = transform.multiple_lags(df, start=1, end=3, columns=["Close"]); df_out.head()
 df_out  = transform.prophet_feat(df.copy().reset_index(),["Close","Open"],"Date", "D"); df_out.head()
 ```
 **Interaction**
