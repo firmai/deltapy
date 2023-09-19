@@ -14,7 +14,7 @@ setup(name='deltapy',
       install_requires=[
             "fbprophet",
             "pandas",
-            "pykalman",
+            "pykalman-bardo",
             "tsaug",
             "gplearn",
             "ta",
